@@ -247,7 +247,7 @@ class HPM_Podcasts {
 		);
 	}
 
-	function show_meta_box( $object, $box ) {
+	public function show_meta_box( $object, $box ) {
 		wp_nonce_field( basename( __FILE__ ), 'hpm_show_class_nonce' );
 
 		$hpm_show_social = get_post_meta( $object->ID, 'hpm_show_social', true );

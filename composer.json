@@ -1,13 +1,13 @@
 {
-	"name": "jwcounts/hpm-podcasts",
-	"description": "A Wordpress plugin that allows you to create a podcast feed from any category, either video or audio. It also has the option to periodically cache the feeds as flat XML files to speed up delivery.",
+	"name": "jwcounts/hpm-mods",
+	"description": "We have developed several small MU plugins for various functions and extensions for Wordpress, as well as the HPM Podcasts plugin. HPM Mods rolls all of these plugins into a single place.",
 	"type": "wordpress-plugin",
-	"version": "2019.08.01",
+	"version": "2019.1",
 	"require": {
 		"phpseclib/phpseclib": "*"
 	},
 	"dist": {
-		"url": "https://github.com/jwcounts/hpm-podcasts/archive/v2019.08.01.zip",
+		"url": "https://github.com/jwcounts/hpm-mods/archive/v2019.1.zip",
 		"type": "zip"
 	},
 	"license": "GPL",

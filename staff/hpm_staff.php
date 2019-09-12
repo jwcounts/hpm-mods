@@ -29,7 +29,7 @@ function create_staff_post() {
 			'feeds' => false,
 			'pages' => true
 		],
-		'supports' => [ 'title', 'editor', 'thumbnail' ],
+		'supports' => [ 'title', 'editor', 'thumbnail', 'author' ],
 		'taxonomies' => [ 'staff_category' ],
 		'capability_type' => [ 'hpm_staffer','hpm_staffers' ],
 		'map_meta_cap' => true
@@ -61,7 +61,7 @@ function create_staff_taxonomies() {
 	]);
 }
 
-add_action('admin_init','hpm_staff_add_role_caps',999);
+add_action( 'admin_init', 'hpm_staff_add_role_caps', 999 );
 function hpm_staff_add_role_caps() {
 	// Add the roles you'd like to administer the custom post types
 	$roles = [ 'editor', 'administrator', 'author' ];
@@ -69,7 +69,7 @@ function hpm_staff_add_role_caps() {
 	// Loop through each role and assign capabilities
 	foreach($roles as $the_role) :
 		$role = get_role($the_role);
-        if ( $the_role != 'author' ) :
+        if ( $the_role !== 'author' ) :
             $role->add_cap( 'read' );
             $role->add_cap( 'read_hpm_staffer');
 	        $role->add_cap( 'add_hpm_staffer' );
@@ -122,37 +122,19 @@ function hpm_staff_add_meta() {
 function hpm_staff_meta_box( $object, $box ) {
 	wp_nonce_field( basename( __FILE__ ), 'hpm_staff_class_nonce' );
 
-	$exists_meta = metadata_exists( 'post', $object->ID, 'hpm_staff_meta' );
-	$exists_alpha = metadata_exists( 'post', $object->ID, 'hpm_staff_alpha' );
-	$exists_authid = metadata_exists( 'post', $object->ID, 'hpm_staff_authid' );
-
-	if ( $exists_meta ) :
-		$hpm_staff_meta = get_post_meta( $object->ID, 'hpm_staff_meta', true );
-		if ( empty( $hpm_staff_meta ) ) :
-			$hpm_staff_meta = [ 'title' => '', 'email' => '', 'twitter' => '', 'facebook' => '', 'phone' => '' ];
-		endif;
-	else :
+	$hpm_staff_meta = get_post_meta( $object->ID, 'hpm_staff_meta', true );
+	if ( empty( $hpm_staff_meta ) ) :
 		$hpm_staff_meta = [ 'title' => '', 'email' => '', 'twitter' => '', 'facebook' => '', 'phone' => '' ];
 	endif;
 
-	if ( $exists_alpha ) :
-		$hpm_staff_alpha = get_post_meta( $object->ID, 'hpm_staff_alpha', true );
-		if ( empty( $hpm_staff_alpha ) ) :
-			$hpm_staff_alpha = [ '', '' ];
-		else :
-			$hpm_staff_alpha = explode( '|', $hpm_staff_alpha );
-		endif;
-	else :
+	$hpm_staff_alpha = get_post_meta( $object->ID, 'hpm_staff_alpha', true );
+	if ( empty( $hpm_staff_alpha ) ) :
 		$hpm_staff_alpha = [ '', '' ];
+	else :
+		$hpm_staff_alpha = explode( '|', $hpm_staff_alpha );
 	endif;
 
-	if ( $exists_authid ) :
-        $hpm_staff_authid = get_post_meta( $object->ID, 'hpm_staff_authid', true );
-    else :
-        $hpm_staff_authid = '';
-    endif;
-
-	?>
+	$hpm_staff_authid = get_post_meta( $object->ID, 'hpm_staff_authid', true ); ?>
 	<p><?PHP _e( "Enter the staff member's details below", 'example' ); ?></p>
 	<ul>
 		<li><label for="hpm-staff-name-first"><?php _e( "First Name: ", 'example' ); ?></label> <input type="text" id="hpm-staff-name-first" name="hpm-staff-name-first" value="<?PHP echo $hpm_staff_alpha[1]; ?>" placeholder="Kenny" style="width: 60%;" /></li>
@@ -186,7 +168,7 @@ function hpm_staff_save_meta( $post_id, $post ) {
 
 		/* Check if the current user has permission to edit the post. */
 		if ( !current_user_can( $post_type->cap->edit_post, $post_id ) )
-		return $post_id;
+			return $post_id;
 
 		/* Get the posted data and sanitize it for use as an HTML class. */
 		$hpm_staff = [
@@ -201,9 +183,7 @@ function hpm_staff_save_meta( $post_id, $post ) {
 		$hpm_staff_alpha = $hpm_last."|".$hpm_first;
 		$hpm_staff_authid = ( isset( $_POST['hpm-staff-author'] ) ? sanitize_text_field( $_POST['hpm-staff-author'] ) : '' );
 
-		if ( !empty( $hpm_staff_authid ) ) :
-			update_post_meta( $post_id, 'hpm_staff_authid', $hpm_staff_authid );
-        endif;
+		update_post_meta( $post_id, 'hpm_staff_authid', $hpm_staff_authid );
 		update_post_meta( $post_id, 'hpm_staff_meta', $hpm_staff );
 		update_post_meta( $post_id, 'hpm_staff_alpha', $hpm_staff_alpha );
 	endif;
@@ -235,10 +215,10 @@ function hpm_manage_staff_columns( $column, $post_id ) {
 			endif;
 			break;
 		case 'authorship' :
-			if ( !empty( $staff_authid ) ) :
-				echo __( 'Yes' );
-			else :
+			if ( empty( $staff_authid ) || $staff_authid < 0 ) :
 				echo __( 'No' );
+			else :
+				echo __( 'Yes' );
 			endif;
 			break;
 		case 'staff_category' :
@@ -264,11 +244,10 @@ function hpm_manage_staff_columns( $column, $post_id ) {
 add_action('restrict_manage_posts', 'hpm_filter_post_type_by_taxonomy');
 function hpm_filter_post_type_by_taxonomy() {
 	global $typenow;
-	$post_type = 'staff'; // change to your post type
-	$taxonomy  = 'staff_category'; // change to your taxonomy
-	if ($typenow == $post_type) {
+	$taxonomy  = 'staff_category';
+	if ( $typenow == 'staff' ) :
 		$selected      = isset( $_GET[ $taxonomy ] ) ? $_GET[$taxonomy ] : '';
-		$info_taxonomy = get_taxonomy($taxonomy);
+		$info_taxonomy = get_taxonomy( $taxonomy );
 		wp_dropdown_categories([
 			'show_option_all' => __("Show All {$info_taxonomy->label}"),
 			'taxonomy'        => $taxonomy,
@@ -280,16 +259,15 @@ function hpm_filter_post_type_by_taxonomy() {
 			'show_count'      => true,
 			'hide_empty'      => true,
 		]);
-	};
+	endif;
 }
 
 add_filter('parse_query', 'hpm_convert_id_to_term_in_query');
 function hpm_convert_id_to_term_in_query( $query ) {
 	global $pagenow;
-	$post_type = 'staff'; // change to your post type
-	$taxonomy  = 'staff_category'; // change to your taxonomy
+	$taxonomy  = 'staff_category';
 	$q_vars    = &$query->query_vars;
-	if ( $pagenow == 'edit.php' && isset( $q_vars['post_type'] ) && $q_vars['post_type'] == $post_type && isset( $q_vars[ $taxonomy ] ) && is_numeric( $q_vars[ $taxonomy ] ) && $q_vars[ $taxonomy ] != 0 ) {
+	if ( $pagenow == 'edit.php' && isset( $q_vars['post_type'] ) && $q_vars['post_type'] == 'staff' && isset( $q_vars[ $taxonomy ] ) && is_numeric( $q_vars[ $taxonomy ] ) && $q_vars[ $taxonomy ] != 0 ) {
 		$term = get_term_by('id', $q_vars[ $taxonomy ], $taxonomy );
 		$q_vars[ $taxonomy ] = $term->slug;
 	}
@@ -299,33 +277,17 @@ function hpm_convert_id_to_term_in_query( $query ) {
  * Changes number of posts loaded when viewing the staff directory
  */
 function staff_meta_query( $query ) {
-	if ( $query->is_archive() && $query->is_main_query() ) :
-		$staff_check = $query->get( 'post_type' );
-		if ( $staff_check == 'staff' ) :
+	if ( $query->is_archive() && $query->is_main_query() && $query->get( 'post_type' ) == 'staff' ) :
+		$query->set( 'meta_query', [ 'hpm_staff_alpha' => [ 'key' => 'hpm_staff_alpha' ] ] );
+		$query->set( 'orderby', 'meta_value' );
+		$query->set( 'order', 'ASC' );
+		if ( !is_admin() ) :
+			$query->query['posts_per_page'] = 30;
 			$query->set( 'posts_per_page', 30 );
-			$query->set( 'meta_query', [ 'hpm_staff_alpha' => [ 'key' => 'hpm_staff_alpha' ] ] );
-			$query->set( 'orderby', 'meta_value' );
-			$query->set( 'order', 'ASC' );
 		endif;
 	endif;
 }
 add_action( 'pre_get_posts', 'staff_meta_query' );
-
-/*
- * Always sort staff alphabetically by hpm_staff_alpha ( last name, first name )
- */
-function staff_tax_meta_query( $query ) {
-	if ( $query->is_archive() && $query->is_main_query() ) :
-		$staff_check = $query->get( 'staff_category' );
-		if ( !empty( $staff_check ) ) :
-			$query->set( 'posts_per_page', 30 );
-			$query->set( 'meta_query', [ 'hpm_staff_alpha' => [ 'key' => 'hpm_staff_alpha' ] ] );
-			$query->set( 'orderby', 'meta_value' );
-			$query->set( 'order', 'ASC' );
-		endif;
-	endif;
-}
-add_action( 'pre_get_posts', 'staff_tax_meta_query' );
 
 function hpm_staff_single_template( $single ) {
 	global $post;
