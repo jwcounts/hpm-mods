@@ -59,6 +59,7 @@ class HPM_Podcasts {
 		add_filter( 'the_content', [ $this, 'article_footer' ] );
 		add_filter( 'get_the_excerpt', [ $this, 'remove_foot_filter' ], 9 );
 		add_filter( 'get_the_excerpt', [ $this, 'add_foot_filter' ], 11 );
+		add_action( 'wp_head', [ $this, 'add_feed_head' ], 100 );
 
 		if ( ! array_key_exists( 'hpm_filter_text' , $GLOBALS['wp_filter'] ) ) :
 			add_filter( 'hpm_filter_text', 'wptexturize' );
@@ -503,7 +504,7 @@ class HPM_Podcasts {
 				'not_found' => __( 'Podcast Not Found' ),
 				'not_found_in_trash' => __( 'Podcast not found in trash' )
 			],
-			'description' => 'Feed information for locally-produced podcasts',
+			'description' => 'All of Houston Public Media\'s podcasting information, including links, content, and more',
 			'public' => true,
 			'menu_position' => 20,
 			'menu_icon' => 'dashicons-playlist-audio',
@@ -533,7 +534,7 @@ class HPM_Podcasts {
 				'not_found' => __( 'Show Not Found' ),
 				'not_found_in_trash' => __( 'Show not found in trash' )
 			],
-			'description' => 'Information pertaining to locally-produced shows',
+			'description' => 'Listings and content for Houston Public Media\'s locally-produced shows for TV, radio, and the web',
 			'public' => true,
 			'menu_position' => 20,
 			'menu_icon' => 'dashicons-video-alt3',
@@ -1313,6 +1314,21 @@ class HPM_Podcasts {
 		return $content;
 	}
 
+	public function add_feed_head() {
+		global $wp_query;
+		if ( !is_home() && !is_404() && get_post_type() === 'shows' ) :
+			$ID = $wp_query->queried_object_id;
+			$show_meta = get_post_meta( $ID, 'hpm_show_meta', true );
+			if ( !empty( $show_meta['podcast'] ) ) : ?>
+		<link rel="alternate" type="application/rss+xml" title="<?php echo get_the_title( $ID ); ?> Podcast Feed" href="<?php echo get_the_permalink( $show_meta['podcast'] ); ?>" />
+<?php
+			else :
+				$show_cat = get_post_meta( $ID, 'hpm_shows_cat', true ); ?>
+		<link rel="alternate" type="application/rss+xml" title="<?php echo get_the_title( $ID ); ?> RSS Feed" href="<?php echo get_term_feed_link( $show_cat ); ?>" />
+<?php
+			endif;
+		endif;
+	}
 }
 
 new HPM_Podcasts();

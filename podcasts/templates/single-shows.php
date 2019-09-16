@@ -19,8 +19,8 @@ get_header(); ?>
 				$show_name = $post->post_name;
 				$social = get_post_meta( get_the_ID(), 'hpm_show_social', true );
 				$show = get_post_meta( get_the_ID(), 'hpm_show_meta', true );
-				$header_back = wp_get_attachment_image_src( get_post_thumbnail_id(), 'full' ); 
-				$show_title = get_the_title(); 
+				$header_back = wp_get_attachment_image_src( get_post_thumbnail_id(), 'full' );
+				$show_title = get_the_title();
 				$show_content = get_the_content();
 				$page_head_style = '';
 				$page_head_class = '';
@@ -67,7 +67,7 @@ get_header(); ?>
 					endif;
 					echo HPM_Podcasts::show_social( $show['podcast'], false, get_the_ID() ); ?>
 			</div>
-			<?php 
+			<?php
 				endif;?>
 		<?php
 			endwhile; ?>
@@ -79,7 +79,6 @@ get_header(); ?>
 						<?php echo apply_filters( 'the_content', $show_content ); ?>
 					</div>
 			<?php
-						echo HPM_Listings::generate( $show_name );
 						if ( $show_name == 'skyline-sessions' || $show_name == 'music-in-the-making' ) :
 							$googletag = 'div-gpt-ad-1470409396951-0';
 						else :

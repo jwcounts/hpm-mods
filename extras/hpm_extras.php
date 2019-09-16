@@ -32,6 +32,24 @@ function hpm_apple_news_exclude( $post_id, $post ) {
 	endforeach;
 }
 
+function hpm_versions() {
+	$transient = get_transient( 'hpm_versions' );
+	if ( !empty( $transient ) ) :
+		return $transient;
+	else :
+		$remote = wp_remote_get( esc_url_raw( "https://s3-us-west-2.amazonaws.com/hpmwebv2/assets/version.json" ) );
+		if ( is_wp_error( $remote ) ) :
+			return false;
+		else :
+			$api = wp_remote_retrieve_body( $remote );
+			$json = json_decode( $api, TRUE );
+		endif;
+
+		set_transient( 'hpm_versions', $json, 5 * 60 );
+		return $json;
+	endif;
+}
+
 /*
  * Add script so that javascript is detected and saved as a class on the body element
  */
@@ -728,6 +746,9 @@ if ( !function_exists('hpm_add_allowed_tags' ) ) {
 		$tags['script'] = [
 			'src' => true,
 		];
+		$tags['iframe'] = [
+			'src' => true,
+		];
 		return $tags;
 	}
 	add_filter( 'wp_kses_allowed_html', 'hpm_add_allowed_tags' );
@@ -760,24 +781,6 @@ function custom_get_coauthors( $object, $field_name, $request ) {
 		];
 	};
 	return $authors;
-}
-
-function hpm_versions() {
-	$transient = get_transient( 'hpm_versions' );
-	if ( !empty( $transient ) ) :
-		return $transient;
-	else :
-		$remote = wp_remote_get( esc_url_raw( "https://s3-us-west-2.amazonaws.com/hpmwebv2/assets/version.json" ) );
-		if ( is_wp_error( $remote ) ) :
-			return false;
-		else :
-			$api = wp_remote_retrieve_body( $remote );
-			$json = json_decode( $api, TRUE );
-		endif;
-
-		set_transient( 'hpm_versions', $json, 5 * 60 );
-		return $json;
-	endif;
 }
 
 function hpm_segments( $name, $date ) {
