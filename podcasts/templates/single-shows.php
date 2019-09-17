@@ -85,8 +85,8 @@ get_header(); ?>
 							$googletag = 'div-gpt-ad-1394579228932-1';
 						endif; ?>
 						<div class="sidebar-ad">
+							<h4>Support Comes From</h4>
 							<div id="<?php echo $googletag; ?>">
-								<h4>Support Comes From</h4>
 								<script type='text/javascript'>
 									googletag.cmd.push(function() { googletag.display('<?php echo $googletag; ?>'); });
 								</script>
