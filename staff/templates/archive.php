@@ -39,7 +39,7 @@ get_header(); ?>
 					if ( has_post_thumbnail() ) : ?>
 						<div class="staff-thumb">
 					<?php echo ( $bio_link ? '<a href="' . get_the_permalink() . '" aria-hidden="true">' : ''); ?>
-							<img src="<?php the_post_thumbnail_url(); ?>" alt="<?php echo get_the_title() . ': ' . $staff['title'] ?>" />
+							<img src="<?php the_post_thumbnail_url('post-thumbnail'); ?>" alt="<?php echo get_the_title() . ': ' . $staff['title'] ?>" />
 					<?php echo ( $bio_link ? '</a>' : '' ); ?>
 						</div>
 <?php
