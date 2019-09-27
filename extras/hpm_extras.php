@@ -1224,7 +1224,7 @@ function postscript_metabox_admin_notice() {
 function postscript_add_meta_box() {
     $options = [
 		'user_roles' => [ 'administrator' ],
-		'post_types' => [ 'post', 'page' ],
+		'post_types' => [ 'post', 'page', 'shows' ],
 		'allow' => [ 'class_body' => 'on', 'class_post' => 'on' ]
 	];
 
@@ -1408,7 +1408,7 @@ function postscript_class_body( $classes ) {
     $post_id = get_the_ID();
     $options = [
 		'user_roles' => [ 'administrator' ],
-		'post_types' => [ 'post', 'page', 'show', 'staff' ],
+		'post_types' => [ 'post', 'page', 'shows' ],
 		'allow' => [ 'class_body' => 'on', 'class_post' => 'on' ]
 	];
 
@@ -1437,7 +1437,7 @@ function postscript_class_post( $classes ) {
     $post_id = get_the_ID();
     $options = [
 		'user_roles' => [ 'administrator' ],
-		'post_types' => [ 'post', 'page', 'show', 'staff' ],
+		'post_types' => [ 'post', 'page', 'shows' ],
 		'allow' => [ 'class_body' => 'on', 'class_post' => 'on' ]
 	];
 
