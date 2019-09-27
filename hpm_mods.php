@@ -1,14 +1,14 @@
 <?php
 /**
  * @link 			https://github.com/jwcounts/hpm-mods
- * @since  			2019.2
+ * @since  			2019.2.6
  * @package  		HPM-Podcasts
  *
  * @wordpress-plugin
  * Plugin Name: 	HPM Mods
  * Plugin URI: 		https://github.com/jwcounts/hpm-mods
  * Description: 	Previously HPM Podcasts. Pulling together several must-use plugins into one place, HPM Mods contains 1.) podcast feed creation and caching, 2.) show page support, 3.) staff directory support, 4.) priority posts for the homepage, 5.) internal display ad support, 6.) news series support for pages, and 7.) other miscellaneous support functions.
- * Version: 		2019.2
+ * Version: 		2019.2.6
  * Author: 			Jared Counts
  * Author URI: 		https://www.houstonpublicmedia.org/staff/jared-counts/
  * License: 		GPL-2.0+

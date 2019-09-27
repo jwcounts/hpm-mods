@@ -1408,7 +1408,7 @@ function postscript_class_body( $classes ) {
     $post_id = get_the_ID();
     $options = [
 		'user_roles' => [ 'administrator' ],
-		'post_types' => [ 'post', 'page' ],
+		'post_types' => [ 'post', 'page', 'show', 'staff' ],
 		'allow' => [ 'class_body' => 'on', 'class_post' => 'on' ]
 	];
 
@@ -1437,7 +1437,7 @@ function postscript_class_post( $classes ) {
     $post_id = get_the_ID();
     $options = [
 		'user_roles' => [ 'administrator' ],
-		'post_types' => [ 'post', 'page' ],
+		'post_types' => [ 'post', 'page', 'show', 'staff' ],
 		'allow' => [ 'class_body' => 'on', 'class_post' => 'on' ]
 	];
 
