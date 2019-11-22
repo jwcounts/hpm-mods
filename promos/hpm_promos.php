@@ -370,21 +370,6 @@ class HPM_Promos {
 		-moz-osx-font-smoothing: grayscale;
 		color: #82878c;
 	}
-	#endtimestampdiv {
-		padding-top: 5px;
-		line-height: 23px;
-	}
-	#endtimestampdiv select {
-		height: 21px;
-		line-height: 14px;
-		padding: 0;
-		vertical-align: top;
-		font-size: 12px;
-	}
-	#endtimestampdiv input {
-		border-width: 1px;
-		border-style: solid;
-	}
 	#hpm_promo_end_day,
 	#hpm_promo_end_hour,
 	#hpm_promo_end_min {
@@ -394,8 +379,10 @@ class HPM_Promos {
 	#hpm_promo_end_day,
 	#hpm_promo_end_hour,
 	#hpm_promo_end_min {
-		padding: 1px;
+		padding: 6px 1px;
 		font-size: 12px;
+		line-height: 1.16666666;
+		text-align: center;
 	}
 </style>
 <?php

@@ -963,11 +963,7 @@ class HPM_Podcasts {
 				$offset = get_option('gmt_offset')*3600;
 				$time = $t + $offset;
 				$date = date( 'F j, Y @ g:i A', $time );
-				if ( $update_last == 'none' ) :
-					add_option( 'hpm_podcast_last_update', $time, false );
-				else :
-					update_option( 'hpm_podcast_last_update', $time, false );
-				endif;
+				update_option( 'hpm_podcast_last_update', $time, false );
 				return rest_ensure_response( [ 'code' => 'rest_api_success', 'message' => esc_html__( 'Podcast feeds successfully updated!', 'hpm-podcasts' ), 'data' => [ 'date' => $date, 'timestamp' => $time, 'status' =>
 					200 ] ] );
 			endif;
