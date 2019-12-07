@@ -71,7 +71,7 @@ get_header(); ?>
 			</aside>
 		<?php
 			if ( !empty( $staff_authid ) && $staff_authid > 0 ) :
-				// $nice_name = get_the_author_meta( 'user_nicename', $staff_authid );
+				echo $nice_name = get_the_author_meta( 'user_nicename', $staff_authid );
 				$auth = new WP_query( [
 					'author' => $staff_authid,
 					'posts_per_page' => 15,
