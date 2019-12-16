@@ -406,7 +406,7 @@ function update_post_meta_info( $original_post_id, $revised_post ) {
 
 	foreach ( $post_meta_keys as $meta_key ) :
 		$meta_key_trim = trim( $meta_key );
-		if ( '_' == $meta_key_trim{0} || strpos( $meta_key_trim, 'oasis' ) !== false ) :
+		if ( '_' == $meta_key_trim[0] || strpos( $meta_key_trim, 'oasis' ) !== false ) :
 			continue;
 		endif;
 		$revised_meta_values = get_post_custom_values( $meta_key, $revised_post->ID );
