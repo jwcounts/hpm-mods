@@ -277,7 +277,14 @@ function hpm_convert_id_to_term_in_query( $query ) {
  * Changes number of posts loaded when viewing the staff directory
  */
 function staff_meta_query( $query ) {
-	if ( $query->is_archive() && $query->is_main_query() && $query->get( 'post_type' ) == 'staff' ) :
+	if (
+		$query->is_archive() &&
+		$query->is_main_query() &&
+		(
+			$query->get( 'post_type' ) == 'staff' ||
+			!empty( $query->get( 'staff_category' ) )
+		)
+	) :
 		$query->set( 'meta_query', [ 'hpm_staff_alpha' => [ 'key' => 'hpm_staff_alpha' ] ] );
 		$query->set( 'orderby', 'meta_value' );
 		$query->set( 'order', 'ASC' );
