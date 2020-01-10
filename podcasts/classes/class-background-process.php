@@ -172,6 +172,7 @@ class HPM_Media_Upload {
 					throw new Exception( "Unable to connect to the FTP server. Please check your FTP Host URL or IP and try again." );
 				endif;
 				$loggedIn = ftp_login( $con, $short['username'], $ftp_password );
+				ftp_pasv( $con, true );
 				if ( false === $loggedIn ) :
 					throw new Exception( "Unable to log in to the FTP server. Please check your credentials and try again." );
 				endif;
