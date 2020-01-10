@@ -128,20 +128,19 @@ class HPM_Media_Upload {
 		$save = $dir['basedir'];
 
 		$url = wp_get_attachment_url( $attach );
-		log_it( $url );
 		$metadata = get_post_meta( $attach, '_wp_attachment_metadata', true );
 
 		if ( strpos( $url, $dir['baseurl'] ) !== FALSE ) :
 			$meta = get_post_meta( $attach, '_wp_attached_file', true );
 			$local = $save . $ds . $meta;
 			$path = pathinfo( $meta );
-			update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'in progress', 'message' => esc_html__( 'Podcast file exists on the local server, proceeding.', 'hpm-podcasts' ) ] );
+			update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'in-progress', 'message' => esc_html__( 'Podcast file exists on the local server, proceeding.', 'hpm-podcasts' ) ] );
 		else :
 			$download = true;
 			$parse = parse_url( $url );
 			$path = pathinfo( $parse['path'] );
 			$local = $save . $ds . $path['basename'];
-			update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'in progress', 'message' => esc_html__( 'Podcast file is being downloaded to the local server.', 'hpm-podcasts' ) ] );
+			update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'in-progress', 'message' => esc_html__( 'Podcast file is being downloaded to the local server.', 'hpm-podcasts' ) ] );
 			$remote = wp_remote_get( esc_url_raw( $url ) );
 			if ( is_wp_error( $remote ) ) :
 				update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'error', 'message' => esc_html__( 'Unable to download your media file to the local server. Please try again.', 'hpm-podcasts' ) ] );
@@ -155,48 +154,86 @@ class HPM_Media_Upload {
 			endif;
 		endif;
 
-		update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'in progress', 'message' => esc_html__( 'Podcast file downloaded to local server. Connecting to remote host.', 'hpm-podcasts' ) ] );
+		update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'in-progress', 'message' => esc_html__( 'Podcast file downloaded to local server. Connecting to remote host.', 'hpm-podcasts' ) ] );
 
 		if ( $pods['upload-media'] == 'sftp' ) :
 			$short = $pods['credentials']['sftp'];
-			$autoload = $ds . 'vendor' . $ds . 'autoload.php';
-			if ( file_exists( HPM_MODS_DIR . $autoload ) ) :
-				require HPM_MODS_DIR . $autoload;
-			else :
-				require SITE_ROOT . $autoload;
-			endif;
-			$sftp = new \phpseclib\Net\SFTP( $short['host'] );
 			if ( defined( 'HPM_SFTP_PASSWORD' ) ) :
-				$sftp_password = HPM_SFTP_PASSWORD;
+				$ftp_password = HPM_SFTP_PASSWORD;
 			elseif ( !empty( $short['password'] ) ) :
-				$sftp_password = $short['password'];
+				$ftp_password = $short['password'];
 			else :
-				update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'error', 'message' => esc_html__( 'No SFTP password provided. Please check your settings.', 'hpm-podcasts' ) ] );
+				update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'error', 'message' => esc_html__( 'No FTP password provided. Please check your settings.', 'hpm-podcasts' ) ] );
 				return false;
 			endif;
-			if ( !$sftp->login( $short['username'], $sftp_password ) ) :
-				$message = "Unable to connect to the SFTP server. Please check your SFTP Host URL or IP and try again.";
-			endif;
-
-			if ( !empty( $short['folder'] ) ) :
-				if ( !$sftp->chdir( $short['folder'] ) ) :
-					$sftp->mkdir( $short['folder'] );
-					$sftp->chdir( $short['folder'] );
+			try {
+				$con = ftp_connect( $short['host'] );
+				if ( false === $con ) :
+					throw new Exception( "Unable to connect to the FTP server. Please check your FTP Host URL or IP and try again." );
 				endif;
-			endif;
+				$loggedIn = ftp_login( $con, $short['username'], $ftp_password );
+				if ( false === $loggedIn ) :
+					throw new Exception( "Unable to log in to the FTP server. Please check your credentials and try again." );
+				endif;
+				if ( !empty( $short['folder'] ) ) :
+					if ( !ftp_chdir( $con, $short['folder'] ) ) :
+						ftp_mkdir( $con, $short['folder'] );
+						ftp_chdir( $con, $short['folder'] );
+					endif;
+				endif;
+				if ( !ftp_chdir( $con, $feed ) ) :
+					ftp_mkdir( $con, $feed );
+					ftp_chdir( $con, $feed );
+				endif;
+				update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'in-progress', 'message' => esc_html__( 'Remote host connected. Starting upload.', 'hpm-podcasts' ) ] );
+				if ( ! ftp_put( $con, $path['basename'], $local, FTP_BINARY ) ) :
+					throw new Exception( "The file could not be saved on the FTP server. Please verify your permissions on that server and try again." );
+				endif;
+				ftp_close( $con );
+				$sg_url = $short['url'].'/'.$feed.'/'.$path['basename'];
+			} catch ( Exception $e ) {
+				$message = $e->getMessage();
+			}
 
-			if ( !$sftp->chdir( $feed ) ) :
-				$sftp->mkdir( $feed );
-				$sftp->chdir( $feed );
-			endif;
+			// $short = $pods['credentials']['sftp'];
+			// $autoload = $ds . 'vendor' . $ds . 'autoload.php';
+			// if ( file_exists( HPM_MODS_DIR . $autoload ) ) :
+			// 	require HPM_MODS_DIR . $autoload;
+			// else :
+			// 	require SITE_ROOT . $autoload;
+			// endif;
+			// $sftp = new \phpseclib\Net\SFTP( $short['host'] );
+			// if ( defined( 'HPM_SFTP_PASSWORD' ) ) :
+			// 	$sftp_password = HPM_SFTP_PASSWORD;
+			// elseif ( !empty( $short['password'] ) ) :
+			// 	$sftp_password = $short['password'];
+			// else :
+			// 	update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'error', 'message' => esc_html__( 'No SFTP password provided. Please check your settings.', 'hpm-podcasts' ) ] );
+			// 	return false;
+			// endif;
+			// if ( !$sftp->login( $short['username'], $sftp_password ) ) :
+			// 	$message = "Unable to connect to the SFTP server. Please check your SFTP Host URL or IP and try again.";
+			// endif;
 
-			update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'in progress', 'message' => esc_html__( 'Remote host connected. Starting upload.', 'hpm-podcasts' ) ] );
+			// if ( !empty( $short['folder'] ) ) :
+			// 	if ( !$sftp->chdir( $short['folder'] ) ) :
+			// 		$sftp->mkdir( $short['folder'] );
+			// 		$sftp->chdir( $short['folder'] );
+			// 	endif;
+			// endif;
 
-			if ( !$sftp->put( $path['basename'], $local, \phpseclib\Net\SFTP::SOURCE_LOCAL_FILE ) ) :
-				$message = "The file could not be saved on the SFTP server. Please verify your permissions on that server and try again.";
-			endif;
-			unset( $sftp );
-			$sg_url = $short['url'].'/'.$feed.'/'.$path['basename'];
+			// if ( !$sftp->chdir( $feed ) ) :
+			// 	$sftp->mkdir( $feed );
+			// 	$sftp->chdir( $feed );
+			// endif;
+
+			// update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'in progress', 'message' => esc_html__( 'Remote host connected. Starting upload.', 'hpm-podcasts' ) ] );
+
+			// if ( !$sftp->put( $path['basename'], $local, \phpseclib\Net\SFTP::SOURCE_LOCAL_FILE ) ) :
+			// 	$message = "The file could not be saved on the SFTP server. Please verify your permissions on that server and try again.";
+			// endif;
+			// unset( $sftp );
+			// $sg_url = $short['url'].'/'.$feed.'/'.$path['basename'];
 		else :
 			update_post_meta( $id, 'hpm_podcast_status', [ 'status' => 'error', 'message' => esc_html__( 'No media upload target was selected. Please check your settings.', 'hpm-podcasts' ) ] );
 			return false;

@@ -40,8 +40,8 @@
 							<div class="handlediv" title="Click to toggle"><br></div>
 							<h2 class="hndle"><span><?php _e('User Roles', 'hpm-podcasts' ); ?></span></h2>
 							<div class="inside">
-								<p><?php _e('Select all of the user roles that you would like to be able to manage your podcast feeds.  Anyone 
-										who can create new posts can create an episode of a podcast, but only the roles selected here can 
+								<p><?php _e('Select all of the user roles that you would like to be able to manage your podcast feeds.  Anyone
+										who can create new posts can create an episode of a podcast, but only the roles selected here can
 										create, alter, or delete podcast feeds.', 'hpm-podcasts' ); ?></p>
 								<p><?php _e('To select more than one, hold down Ctrl (on Windows) or Command (on Mac) and click the roles you want included.', 'hpm-podcasts' ); ?></p>
 								<table class="form-table">
@@ -106,7 +106,7 @@
 												?></label></th>
 										<td>
 											<select name="hpm_podcast_settings[upload-media]" class="regular-text" id="hpm-media">
-												<option value="sftp" <?php selected( $pods['upload-media'], 'sftp', TRUE); ?>>SFTP</option>
+												<option value="sftp" <?php selected( $pods['upload-media'], 'sftp', TRUE); ?>>FTP</option>
 											</select>
 										</td>
 									</tr>
@@ -117,29 +117,29 @@
 					<div id="hpm-sftp" class="meta-box-sortables ui-sortable hpm-uploads">
 						<div class="postbox">
 							<div class="handlediv" title="Click to toggle"><br></div>
-							<h2 class="hndle"><span><?php _e('SFTP Credentials', 'hpm-podcasts' ); ?></span></h2>
+							<h2 class="hndle"><span><?php _e('FTP Credentials', 'hpm-podcasts' ); ?></span></h2>
 							<div class="inside">
-								<p><?php _e("If you aren't comfortable storing your SFTP password in your database, you can define it as a Wordpress default.  Add the following line to your wp-config.php file:",	'hpm-podcasts' );
+								<p><?php _e("If you aren't comfortable storing your FTP password in your database, you can define it as a Wordpress default.  Add the following line to your wp-config.php file:",	'hpm-podcasts' );
 									?></p>
 								<pre>define('HPM_SFTP_PASSWORD', 'YOUR_SFTP_PASSWORD');</pre>
 								<table class="form-table">
 									<tr valign="top">
-										<th scope="row"><label for="hpm_podcast_settings[credentials][sftp][host]"><?php _e('SFTP Host', 'hpm-podcasts' ); ?></label></th>
+										<th scope="row"><label for="hpm_podcast_settings[credentials][sftp][host]"><?php _e('FTP Host', 'hpm-podcasts' ); ?></label></th>
 										<td><input type="text" name="hpm_podcast_settings[credentials][sftp][host]" value="<?php echo $pods['credentials']['sftp']['host']; ?>" class="regular-text" placeholder="URL or IP
 											Address" /></td>
 									</tr>
 									<tr valign="top">
-										<th scope="row"><label for="hpm_podcast_settings[credentials][sftp][url]"><?php _e('SFTP Public URL', 'hpm-podcasts' ); ?></label></th>
+										<th scope="row"><label for="hpm_podcast_settings[credentials][sftp][url]"><?php _e('FTP Public URL', 'hpm-podcasts' ); ?></label></th>
 										<td><input type="text" name="hpm_podcast_settings[credentials][sftp][url]" value="<?php echo $pods['credentials']['sftp']['url']; ?>" class="regular-text" placeholder="http://ondemand.example.com" /></td>
 									</tr>
 									<tr valign="top">
-										<th scope="row"><label for="hpm_podcast_settings[credentials][sftp][username]"><?php _e('SFTP Username', 'hpm-podcasts' ); ?></label></th>
+										<th scope="row"><label for="hpm_podcast_settings[credentials][sftp][username]"><?php _e('FTP Username', 'hpm-podcasts' ); ?></label></th>
 										<td><input type="text" name="hpm_podcast_settings[credentials][sftp][username]" value="<?php echo
 											$pods['credentials']['sftp']['username']; ?>" class="regular-text" placeholder="thisguy"
 											/></td>
 									</tr>
 									<tr valign="top">
-										<th scope="row"><label for="hpm_podcast_settings[credentials][sftp][password]"><?php _e('SFTP Password', 'hpm-podcasts' ); ?></label></th>
+										<th scope="row"><label for="hpm_podcast_settings[credentials][sftp][password]"><?php _e('FTP Password', 'hpm-podcasts' ); ?></label></th>
 										<td><input name="hpm_podcast_settings[credentials][sftp][password]" <?php
 											if ( defined( 'HPM_SFTP_PASSWORD' ) ) :
 												echo 'value="Set in wp-config.php" disabled type="text" ';
@@ -148,7 +148,7 @@
 											endif; ?>class="regular-text" placeholder="P@assw0rd" /></td>
 									</tr>
 									<tr valign="top">
-										<th scope="row"><label for="hpm_podcast_settings[credentials][sftp][folder]"><?php _e('SFTP Folder', 'hpm-podcasts' ); ?></label></th>
+										<th scope="row"><label for="hpm_podcast_settings[credentials][sftp][folder]"><?php _e('FTP Folder', 'hpm-podcasts' ); ?></label></th>
 										<td><input type="text" name="hpm_podcast_settings[credentials][sftp][folder]" value="<?php echo $pods['credentials']['sftp']['folder']; ?>" class="regular-text" placeholder="folder" /></td>
 									</tr>
 								</table>

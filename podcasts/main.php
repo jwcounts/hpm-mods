@@ -628,7 +628,7 @@ class HPM_Podcasts {
 		endif;
 
 		$this->process_upload->data( [ 'id' => $request['id'], 'feed' => $request['feed'], 'attach' => $request['attach'] ] )->dispatch();
-		update_post_meta( $request['id'], 'hpm_podcast_status', [ 'status' => 'in-progress', 'message' => esc_html__( 'Upload process initializing.', 'hpm-podcasts' ) ] );
+		//update_post_meta( $request['id'], 'hpm_podcast_status', [ 'status' => 'in-progress', 'message' => esc_html__( 'Upload process initializing.', 'hpm-podcasts' ) ] );
 
 		return rest_ensure_response( [ 'code' => 'rest_api_success', 'message' => esc_html__( 'Podcast upload started successfully.', 'hpm-podcasts' ), 'data' => [ 'status' => 200 ] ] );
 	}
@@ -652,7 +652,7 @@ class HPM_Podcasts {
 		else :
 			if ( $status['status'] == 'error' ) :
 				return new WP_Error( 'rest_api_sad', esc_html__( $status['message'], 'hpm-podcasts' ), [ 'status' => 500 ] );
-			elseif ( $status['status'] == 'in progress' ) :
+			elseif ( $status['status'] == 'in-progress' ) :
 				return rest_ensure_response( [ 'code' => 'rest_api_success', 'message' => esc_html__( $status['message'], 'hpm-podcasts' ), 'data' => [ 'current' => 'in-progress', 'status' => 200 ] ] );
 			elseif ( $status['status'] == 'success' ) :
 				delete_post_meta( $request['id'], 'hpm_podcast_status', '' );
@@ -663,8 +663,7 @@ class HPM_Podcasts {
 	}
 
 	/**
-	 * Pull a list of podcasts, generate the feeds, and save them as flat XML files, either locally, or in the FTP, SFTP
-	 * or S3 bucket defined
+	 * Pull a list of podcasts, generate the feeds, and save them as flat XML files in the database
 	 *
 	 * @return mixed
 	 */
