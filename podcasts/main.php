@@ -1128,47 +1128,49 @@ class HPM_Podcasts {
 		$catslug = get_post_meta( $this->options['newscast']['feed'], 'hpm_pod_cat', true );
 		$feed = get_post_field( 'post_name', get_post( $this->options['newscast']['feed'] ) );
 
-		if ( $this->options['upload-media'] !== 'sftp' ) :
-			return new WP_Error( 'rest_api_sad', esc_html__( 'SFTP is the only supported upload method at this time. Please contact your administrator.', 'hpm-podcasts' ), [ 'status' => 500 ] );
-		endif;
-
 		$short = $this->options['credentials']['sftp'];
-		$autoload = $ds . 'vendor' . $ds . 'autoload.php';
-		if ( file_exists( HPM_MODS_DIR . $autoload ) ) :
-			require HPM_MODS_DIR . $autoload;
-		else :
-			require SITE_ROOT . $autoload;
-		endif;
-		$sftp = new \phpseclib\Net\SFTP( $short['host'] );
 		if ( defined( 'HPM_SFTP_PASSWORD' ) ) :
-			$sftp_password = HPM_SFTP_PASSWORD;
+			$ftp_password = HPM_SFTP_PASSWORD;
 		elseif ( !empty( $short['password'] ) ) :
-			$sftp_password = $short['password'];
+			$ftp_password = $short['password'];
 		else :
 			return new WP_Error( 'rest_api_sad', esc_html__( 'Cannot upload file to SFTP, no password provided.', 'hpm-podcasts' ), [ 'status' => 500 ] );
 		endif;
-		if ( !$sftp->login( $short['username'], $sftp_password ) ) :
-			return new WP_Error( 'rest_api_sad', esc_html__( "Unable to connect to the SFTP server. Please check your SFTP Host URL or IP and try again.", 'hpm-podcasts' ), [ 'status' => 500 ] );
-		endif;
-
-		if ( !empty( $short['folder'] ) ) :
-			if ( !$sftp->chdir( $short['folder'] ) ) :
-				$sftp->mkdir( $short['folder'] );
-				$sftp->chdir( $short['folder'] );
+		try {
+			$con = ftp_connect( $short['host'] );
+			if ( false === $con ) :
+				throw new Exception( "Unable to connect to the FTP server. Please check your FTP Host URL or IP and try again." );
 			endif;
+			$loggedIn = ftp_login( $con, $short['username'], $ftp_password );
+			ftp_pasv( $con, true );
+			if ( false === $loggedIn ) :
+				throw new Exception( "Unable to log in to the FTP server. Please check your credentials and try again." );
+			endif;
+			if ( !empty( $short['folder'] ) ) :
+				if ( !ftp_chdir( $con, $short['folder'] ) ) :
+					ftp_mkdir( $con, $short['folder'] );
+					ftp_chdir( $con, $short['folder'] );
+				endif;
+			endif;
+			if ( !ftp_chdir( $con, $feed ) ) :
+				ftp_mkdir( $con, $feed );
+				ftp_chdir( $con, $feed );
+			endif;
+
+			if ( ! ftp_put( $con, $filename, $local, FTP_BINARY ) ) :
+				throw new Exception( "The file could not be saved on the FTP server. Please verify your permissions on that server and try again." );
+			endif;
+			ftp_close( $con );
+		} catch ( Exception $e ) {
+			$message = $e->getMessage();
+		}
+		if ( !empty( $message ) ) :
+			return new WP_Error( 'rest_api_sad', esc_html__( $message, 'hpm-podcasts' ), [ 'status' => 500 ] );
 		endif;
 
-		if ( !$sftp->chdir( $feed ) ) :
-			$sftp->mkdir( $feed );
-			$sftp->chdir( $feed );
-		endif;
-
-		if ( !$sftp->put( $filename, $local, \phpseclib\Net\SFTP::SOURCE_LOCAL_FILE ) ) :
-			return new WP_Error( 'rest_api_sad', esc_html__( "The file could not be saved on the SFTP server. Please verify your permissions on that server and try again.", 'hpm-podcasts' ), [ 'status' => 500 ] );
-		endif;
-		unset( $sftp );
 		$sg_url = $short['url'].'/'.$feed.'/'.$filename;
 		unlink( $local );
+
 
 		$args = [
 			'post_title' => 'HPM Local Newscast for '.date( 'g a, l, F j, Y', $now[0] ),
