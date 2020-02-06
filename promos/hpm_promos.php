@@ -71,7 +71,7 @@ class HPM_Promos {
 
 	public function add_role_caps() {
 		// Add the roles you'd like to administer the custom post types
-		$roles = [ 'administrator' ];
+		$roles = [ 'administrator', 'editor' ];
 
 		// Loop through each role and assign capabilities
 		foreach ( $roles as $the_role ) :
