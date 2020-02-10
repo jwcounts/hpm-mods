@@ -560,12 +560,7 @@ class HPM_Promos {
 						$output .= "
 		if (visited === null) {
 			setCookie('visited','true',4);";
-						if ( $wp_global->is_home || ( !empty( $page_id ) && get_page_template_slug( $page_id ) == 'page-main-categories.php' ) ) :
-							$output .= "document.getElementById('top-schedule-wrap').insertAdjacentHTML('afterbegin', lightBox);
-		masonLoad();";
-						else :
-							$output .= "document.getElementById('aside.column-right').insertAdjacentHTML('afterbegin', lightBox);";
-						endif;
+						$output .= "document.getElementById('primary').insertAdjacentHTML('afterbegin', 'lightBox');";
 						$output .= "
 			var campaign = document.querySelectorAll('#campaign-splash, #campaign-close');
 			for (i = 0; i < campaign.length; ++i) {
