@@ -560,7 +560,7 @@ class HPM_Promos {
 						$output .= "
 		if (visited === null) {
 			setCookie('visited','true',4);";
-						$output .= "document.getElementById('primary').insertAdjacentHTML('afterbegin', 'lightBox');";
+						$output .= "document.getElementById('primary').insertAdjacentHTML('afterbegin', lightBox);";
 						$output .= "
 			var campaign = document.querySelectorAll('#campaign-splash, #campaign-close');
 			for (i = 0; i < campaign.length; ++i) {
