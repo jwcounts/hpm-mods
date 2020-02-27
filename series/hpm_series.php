@@ -90,16 +90,16 @@
 		<p>Use the buttons below to select your mobile, tablet, and desktop banner images</p>
 		<?php
 			$hpm_mobile_url = $hpm_tablet_url = $hpm_desktop_url = '';
-			if ( !empty( $hpm_series_embeds['banners']['mobile'] ) ) :
-				$hpm_mobile_temp = wp_get_attachment_image_src( $hpm_series_embeds['banners']['mobile'], 'medium' );
+			if ( !empty( $hpm_series_embeds['banner']['mobile'] ) ) :
+				$hpm_mobile_temp = wp_get_attachment_image_src( $hpm_series_embeds['banner']['mobile'], 'medium' );
 				$hpm_mobile_url = ' style="background-image: url('.$hpm_mobile_temp[0].')"';
 			endif;
-			if ( !empty( $hpm_series_embeds['banners']['tablet'] ) ) :
-				$hpm_tablet_temp = wp_get_attachment_image_src( $hpm_series_embeds['banners']['tablet'], 'medium' );
+			if ( !empty( $hpm_series_embeds['banner']['tablet'] ) ) :
+				$hpm_tablet_temp = wp_get_attachment_image_src( $hpm_series_embeds['banner']['tablet'], 'medium' );
 				$hpm_tablet_url = ' style="background-image: url('.$hpm_tablet_temp[0].')"';
 			endif;
-			if ( !empty( $hpm_series_embeds['banners']['desktop'] ) ) :
-				$hpm_desktop_temp = wp_get_attachment_image_src( $hpm_series_embeds['banners']['desktop'], 'medium' );
+			if ( !empty( $hpm_series_embeds['banner']['desktop'] ) ) :
+				$hpm_desktop_temp = wp_get_attachment_image_src( $hpm_series_embeds['banner']['desktop'], 'medium' );
 				$hpm_desktop_url = ' style="background-image: url('.$hpm_desktop_temp[0].')"';
 			endif;
 		?>
@@ -107,17 +107,17 @@
 			<div class="hpm-show-banner">
 				<div class="hpm-show-banner-image" id="hpm-show-banner-mobile"<?php echo $hpm_mobile_url; ?>></div>
 				<button class="hpm-show-banner-select button button-primary" data-show="mobile">Mobile</button>
-				<input value="<?php echo $hpm_series_embeds['banners']['mobile']; ?>" type="hidden" id="hpm-show-banner-mobile-id" name="hpm-show-banner-mobile-id" />
+				<input value="<?php echo $hpm_series_embeds['banner']['mobile']; ?>" type="hidden" id="hpm-show-banner-mobile-id" name="hpm-show-banner-mobile-id" />
 			</div>
 			<div class="hpm-show-banner">
 				<div class="hpm-show-banner-image" id="hpm-show-banner-tablet"<?php echo $hpm_tablet_url; ?>></div>
 				<button class="hpm-show-banner-select button button-primary" data-show="tablet">Tablet</button>
-				<input value="<?php echo $hpm_series_embeds['banners']['tablet']; ?>" type="hidden" id="hpm-show-banner-tablet-id" name="hpm-show-banner-tablet-id" />
+				<input value="<?php echo $hpm_series_embeds['banner']['tablet']; ?>" type="hidden" id="hpm-show-banner-tablet-id" name="hpm-show-banner-tablet-id" />
 			</div>
 			<div class="hpm-show-banner">
 				<div class="hpm-show-banner-image" id="hpm-show-banner-desktop"<?php echo $hpm_desktop_url; ?>></div>
 				<button class="hpm-show-banner-select button button-primary" data-show="desktop">Desktop</button>
-				<input value="<?php echo $hpm_series_embeds['banners']['desktop']; ?>" type="hidden" id="hpm-show-banner-desktop-id" name="hpm-show-banner-desktop-id" />
+				<input value="<?php echo $hpm_series_embeds['banner']['desktop']; ?>" type="hidden" id="hpm-show-banner-desktop-id" name="hpm-show-banner-desktop-id" />
 			</div>
 		</div>
 		<p>&nbsp;</p>
@@ -207,9 +207,9 @@
 			$hpm_series_embeds['twitter'] = ( isset( $_POST['hpm-series-embeds-twitter'] ) ? $_POST['hpm-series-embeds-twitter'] : '' );
 			$hpm_series_embeds['facebook'] = ( isset( $_POST['hpm-series-embeds-facebook'] ) ? $_POST['hpm-series-embeds-facebook'] : '' );
 			$hpm_series_embeds['order'] = ( isset( $_POST['hpm-series-order'] ) ? $_POST['hpm-series-order'] : 'ASC' );
-			$hpm_series_embeds['banner']['mobile'] = ( isset( $_POST['hpm-show-banner-mobile'] ) ? $_POST['hpm-show-banner-mobile'] : '' );
-			$hpm_series_embeds['banner']['tablet'] = ( isset( $_POST['hpm-show-banner-tablet'] ) ? $_POST['hpm-show-banner-tablet'] : '' );
-			$hpm_series_embeds['banner']['desktop'] = ( isset( $_POST['hpm-show-banner-desktop'] ) ? $_POST['hpm-show-banner-desktop'] : '' );
+			$hpm_series_embeds['banner']['mobile'] = ( isset( $_POST['hpm-show-banner-mobile-id'] ) ? $_POST['hpm-show-banner-mobile-id'] : '' );
+			$hpm_series_embeds['banner']['tablet'] = ( isset( $_POST['hpm-show-banner-tablet-id'] ) ? $_POST['hpm-show-banner-tablet-id'] : '' );
+			$hpm_series_embeds['banner']['desktop'] = ( isset( $_POST['hpm-show-banner-desktop-id'] ) ? $_POST['hpm-show-banner-desktop-id'] : '' );
 
 			update_post_meta( $post_id, 'hpm_series_cat', $hpm_series_cat );
 			update_post_meta( $post_id, 'hpm_series_top', $hpm_series_top );
