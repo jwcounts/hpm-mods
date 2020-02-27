@@ -86,6 +86,9 @@
 		<p><?PHP _e( "Which story should appear first?", 'example' ); ?></p>
 		<?php echo $top_story; ?>
 		<p>&nbsp;</p>
+<?php
+		$template = get_post_meta( $object->ID, '_wp_page_template', true );
+		if ( preg_match( '/series\-tile/', $template ) ) : ?>
 		<h3><?PHP _e( "Banner Images", 'hpm-podcasts' ); ?></h3>
 		<p>Use the buttons below to select your mobile, tablet, and desktop banner images</p>
 		<?php
@@ -121,6 +124,8 @@
 			</div>
 		</div>
 		<p>&nbsp;</p>
+<?PHP
+		endif; ?>
 		<h4>Embeds</h4>
 		<p>Any elements you include in this box will be placed below the article stream.</p>
 		<label for="hpm-series-embeds"><?php _e( "Embeds:", 'example' ); ?></label><br />
