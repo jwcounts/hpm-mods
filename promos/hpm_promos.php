@@ -503,10 +503,11 @@ class HPM_Promos {
 					endif;
 					$content_esc = str_replace( "[[image]]", "'+image+'", $content_esc  );
 					if ( $wp_global->is_home || ( !empty( $page_id ) && get_page_template_slug( $page_id ) == 'page-main-categories.php' ) ) :
-						$output .= "if ( document.getElementById('top-schedule-wrap') !== null ) { document.getElementById('top-schedule-wrap').insertAdjacentHTML('afterbegin', '".$content_esc."'); masonLoad(); }";
+						$output .= "if ( document.getElementById('top-schedule-wrap') !== null ) { document.getElementById('top-schedule-wrap').insertAdjacentHTML('afterbegin', '<div class=\"hpm-promo-mobile-hide\">".$content_esc."</div>'); masonLoad(); }";
 					else :
-						$output .= "if ( document.querySelector( 'aside.column-right' ) !== null ) {document.querySelector('aside.column-right').insertAdjacentHTML('afterbegin', '".$content_esc."'); }";
+						$output .= "if ( document.querySelector( 'aside.column-right' ) !== null ) {document.querySelector('aside.column-right').insertAdjacentHTML('afterbegin', '<div class=\"hpm-promo-mobile\">".$content_esc."</div>'); }";
 					endif;
+					$output .= "document.getElementById('primary').insertAdjacentHTML('afterbegin', '<div class=\"hpm-promo-mobile-show\">".$content_esc ."</div>');";
 				elseif ( $meta['type'] == 'fullwidth' ) :
 					if ( $fullwidth == 0 ) :
 						$sizing = [];
@@ -597,7 +598,24 @@ class HPM_Promos {
 			});
 		}
 	}());
-</script>";
+</script>
+<style>
+	.hpm-promo-mobile-hide {
+		display: none;
+	}
+	.hpm-promo-mobile-show {
+		max-width: 300px;
+		margin: 0 auto;
+	}
+	@media screen and (min-width: 50.0625em) {
+		.hpm-promo-mobile-hide {
+			display: block;
+		}
+		.hpm-promo-mobile-show {
+			display: none;
+		}
+	}
+</style>";
 		endif;
 		return $output;
 	}
