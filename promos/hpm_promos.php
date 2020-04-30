@@ -604,12 +604,19 @@ class HPM_Promos {
 		display: none;
 	}
 	.hpm-promo-mobile-show {
-		max-width: 300px;
 		margin: 0 auto;
+		float: left;
+		width: 50%;
+	}
+	#main {
+		clear: both;
 	}
 	@media screen and (min-width: 50.0625em) {
-		.hpm-promo-mobile-hide {
+		.hpm-promo-mobile-hide,
+		.column-right div.hpm-promo-mobile-hide {
 			display: block;
+			max-width: 300px;
+			margin: 0 auto;
 		}
 		.hpm-promo-mobile-show {
 			display: none;
