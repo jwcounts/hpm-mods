@@ -505,7 +505,7 @@ class HPM_Promos {
 					if ( $wp_global->is_home || ( !empty( $page_id ) && get_page_template_slug( $page_id ) == 'page-main-categories.php' ) ) :
 						$output .= "if ( document.getElementById('top-schedule-wrap') !== null ) { document.getElementById('top-schedule-wrap').insertAdjacentHTML('afterbegin', '<div class=\"hpm-promo-mobile-hide\">".$content_esc."</div>'); masonLoad(); }";
 					else :
-						$output .= "if ( document.querySelector( 'aside.column-right' ) !== null ) {document.querySelector('aside.column-right').insertAdjacentHTML('afterbegin', '<div class=\"hpm-promo-mobile\">".$content_esc."</div>'); }";
+						$output .= "if ( document.querySelector( 'aside.column-right' ) !== null ) {document.querySelector('aside.column-right').insertAdjacentHTML('afterbegin', '<div class=\"hpm-promo-mobile-hide\">".$content_esc."</div>'); }";
 					endif;
 					$output .= "document.getElementById('primary').insertAdjacentHTML('afterbegin', '<div class=\"hpm-promo-mobile-show\">".$content_esc ."</div>');";
 				elseif ( $meta['type'] == 'fullwidth' ) :
