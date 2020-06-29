@@ -133,7 +133,8 @@ class HPM_Promos {
 						],
 						'total' => ''
 					],
-					'emergency' => []
+					'emergency' => [],
+					'dont-miss' => []
 				]
 			];
 		endif;
@@ -153,9 +154,10 @@ class HPM_Promos {
 		<p><label for="hpm_promo[type]"><?php _e( "Type:", 'hpmv2' ); ?></label>
 			<select id="hpm_promo_type" name="hpm_promo[type]">
 				<option value="sidebar" <?PHP selected( $hpm_promo['type'], 'sidebar', TRUE ); ?>>Sidebar Banner/Poll</option>
-				<option value="fullwidth" <?PHP selected( $hpm_promo['type'], 'fullwidth', TRUE ); ?>>Full-Width Banner</option>
+				<option value="dont-miss" <?PHP selected( $hpm_promo['type'], 'dont-miss', TRUE ); ?>>Don't Miss Bullet Point</option>
 				<option value="lightbox" <?PHP selected( $hpm_promo['type'], 'lightbox', TRUE ); ?>>Lightbox</option>
 				<option value="emergency" <?PHP selected( $hpm_promo['type'], 'emergency', TRUE ); ?>>Emergency Notification</option>
+				<option value="fullwidth" <?PHP selected( $hpm_promo['type'], 'fullwidth', TRUE ); ?>>Full-Width Banner</option>
 			</select>
 		</p>
 		<div id="hpm-sidebar" class="hpm-promo-types"<?php echo ( $hpm_promo['type'] == 'sidebar' ? '' : ' style="display: none;"' ); ?>>
@@ -199,7 +201,7 @@ class HPM_Promos {
 			<ul style="margin-bottom: 2em;">
 				<li><label for="hpm_promo[options][lightbox][b][link]"><?php _e('Link: ', 'hpmv2' ); ?></label><input type="text" name="hpm_promo[options][lightbox][b][link]" value="<?php echo $hpm_promo['options']['lightbox']['b']['link']; ?>" style="max-width: 100%; width: 800px;" /></li>
 				<li><label for="hpm_promo[options][lightbox][b][text]"><?php _e('Text: ', 'hpmv2' ); ?></label>
-				<?php wp_editor( $hpm_promo['options']['lightbox']['b']['text'], 'hpm_promo[options][lightbox][b][text]', $editor_opts ); ?>
+					<?php wp_editor( $hpm_promo['options']['lightbox']['b']['text'], 'hpm_promo[options][lightbox][b][text]', $editor_opts ); ?>
 				</li>
 				<li><label for="hpm_promo[options][lightbox][b][image]"><?php _e('Image: ', 'hpmv2' ); ?></label><input type="text" name="hpm_promo[options][lightbox][b][image]" value="<?php echo $hpm_promo['options']['lightbox']['b']['image']; ?>" style="max-width: 100%; width: 800px;" /></li>
 			</ul>
@@ -208,8 +210,8 @@ class HPM_Promos {
 				<li><label for="hpm_promo[options][lightbox][total]"><?php _e('Link to JSON File: ', 'hpmv2' ); ?></label><input type="text" name="hpm_promo[options][lightbox][total]" value="<?php echo $hpm_promo['options']['lightbox']['total']; ?>" style="max-width: 100%; width: 800px;" /></li>
 			</ul>
 		</div>
-		<div id="hpm-emergency" class="hpm-promo-types"<?php echo ( $hpm_promo['type'] == 'emergency' ? '' : ' style="display: none;"'); ?>>
-		</div>
+		<div id="hpm-emergency" class="hpm-promo-types"<?php echo ( $hpm_promo['type'] == 'emergency' ? '' : ' style="display: none;"'); ?>></div>
+		<div id="hpm-dont-miss" class="hpm-promo-types"<?php echo ( $hpm_promo['type'] == 'dont-miss' ? '' : ' style="display: none;"'); ?>></div>
 		<script>
 			jQuery(document).ready(function($){
 				$( "#hpm_promo_type" ).change(function () {
@@ -423,6 +425,7 @@ class HPM_Promos {
 		global $wp_query;
 		$wp_global = $wp_query;
 		$output = '';
+		$dont = [];
 		$lightbox = $fullwidth = 0;
 
 		if ( $wp_global->is_page || $wp_global->is_single ) :
@@ -578,8 +581,17 @@ class HPM_Promos {
 				elseif ( $meta['type'] == 'emergency' ) :
 					$content_esc = str_replace( [ '<p>', '</p>' ], [ '', '' ], $content_esc );
 					$output .= "document.getElementById('fb-root').insertAdjacentHTML('afterend', '<div id=\"emergency\"><span class=\"fa fa-exclamation-circle\" aria-hidden=\"true\"></span> ".$content_esc."</div>');";
+				elseif ( $meta['type'] == 'dont-miss' ) :
+					$dont[] = str_replace( [ '<p>', '</p>' ], [ '', '' ], $content_esc );
 				endif;
 			endwhile;
+		endif;
+		if ( !empty( $dont ) ) :
+			$output .= "document.getElementById('main').insertAdjacentHTML('beforebegin', '<div id=\"hpm-promo-bullets\"><h2>Don&#39;t Miss:</h2><ul>";
+			foreach ( $dont as $d ) :
+				$output .= "<li>" . $d . "</li>";
+			endforeach;
+			$output .= "</ul></div>');";
 		endif;
 		if ( !empty( $output ) ) :
 			$output = "
@@ -608,8 +620,62 @@ class HPM_Promos {
 		float: left;
 		width: 50%;
 	}
+	#hpm-promo-bullets {
+		display: flex;
+		justify-content: center;
+		justify-items: center;
+		align-items: center;
+		align-content: center;
+		margin: 0 0 1em 0;
+		padding: 0;
+		clear: both;
+		width: 100%;
+		flex-flow: row wrap;
+	}
+	#hpm-promo-bullets h2 {
+		color: white;
+		background-color: #cc0000;
+		margin: 0;
+		padding: 0.5em;
+		width: 100%;
+	}
+	#hpm-promo-bullets ul {
+		width: 100%;
+		padding: 1em;
+		margin: 0;
+		background-color: white;
+		list-style: none;
+	}
+	#hpm-promo-bullets ul li {
+		margin: 0;
+		padding: 0 0 0 0.5em;
+	}
+	#hpm-promo-bullets ul li:before {
+		content: '\\2022';
+		position: relative;
+		left: -0.5em;
+	}
+	/* #hpm-promo-bullets ul li a {
+		color: #464646;
+	} */
 	#main {
 		clear: both;
+	}
+	@media screen and (min-width: 34em) {
+		#hpm-promo-bullets {
+			flex-flow: row nowrap;
+		}
+		#hpm-promo-bullets h2 {
+			width: auto;
+		}
+		#hpm-promo-bullets ul {
+			width: auto;
+			flex-grow: 2;
+		}
+		#hpm-promo-bullets ul li {
+			padding: 0 0 0 2em;
+			display: inline;
+		}
 	}
 	@media screen and (min-width: 50.0625em) {
 		.hpm-promo-mobile-hide,
@@ -620,6 +686,12 @@ class HPM_Promos {
 		}
 		.hpm-promo-mobile-show {
 			display: none;
+		}
+		#hpm-promo-bullets {
+			/* width: 64.5%;
+			margin: 0 0.75% 1em; */
+			width: 100%;
+			margin: 1em 0;
 		}
 	}
 </style>";
