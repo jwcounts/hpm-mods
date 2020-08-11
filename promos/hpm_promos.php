@@ -655,9 +655,6 @@ class HPM_Promos {
 		position: relative;
 		left: -0.5em;
 	}
-	/* #hpm-promo-bullets ul li a {
-		color: #464646;
-	} */
 	#main {
 		clear: both;
 	}
@@ -681,15 +678,16 @@ class HPM_Promos {
 		.hpm-promo-mobile-hide,
 		.column-right div.hpm-promo-mobile-hide {
 			display: block;
-			max-width: 300px;
 			margin: 0 auto;
+			background-color: white;
+		}
+		.column-right div.hpm-promo-mobile-hide:nth-last-child(5) {
+			margin-bottom: 1em;
 		}
 		.hpm-promo-mobile-show {
 			display: none;
 		}
 		#hpm-promo-bullets {
-			/* width: 64.5%;
-			margin: 0 0.75% 1em; */
 			width: 100%;
 			margin: 1em 0;
 		}
