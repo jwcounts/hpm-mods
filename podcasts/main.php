@@ -1268,25 +1268,25 @@ class HPM_Podcasts {
 		if ( !empty( $show_id ) ) :
 			$social = get_post_meta( $show_id, 'hpm_show_social', true );
 			if ( !empty( $social['snapchat'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="http://www.snapchat.com/add/'.$social['snapchat'].'" target="_blank" title="Snapchat"><span class="fa fa-snapchat-ghost" aria-hidden="true"></span></a></li>';
+				$temp .= '<li class="station-social-icon"><a href="http://www.snapchat.com/add/'.$social['snapchat'].'" target="_blank" title="Snapchat"><span class="fab fa-snapchat-ghost" aria-hidden="true"></span></a></li>';
 			endif;
 			if ( !empty( $social['tumblr'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="'.$social['tumblr'].'" target="_blank" title="Tumblr"><span class="fa fa-tumblr" aria-hidden="true"></span></a></li>';
+				$temp .= '<li class="station-social-icon"><a href="'.$social['tumblr'].'" target="_blank" title="Tumblr"><span class="fab fa-tumblr" aria-hidden="true"></span></a></li>';
 			endif;
 			if ( !empty( $social['insta'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="https://instagram.com/' . $social['insta'].'" target="_blank" title="Instagram"><span class="fa fa-instagram" aria-hidden="true"></span></a></li>';
+				$temp .= '<li class="station-social-icon"><a href="https://instagram.com/' . $social['insta'].'" target="_blank" title="Instagram"><span class="fab fa-instagram" aria-hidden="true"></span></a></li>';
 			endif;
 			if ( !empty( $social['sc'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="https://soundcloud.com/'.$social['sc'].'" target="_blank" title="SoundCloud"><span class="fa fa-soundcloud" aria-hidden="true"></span></a></li>';
+				$temp .= '<li class="station-social-icon"><a href="https://soundcloud.com/'.$social['sc'].'" target="_blank" title="SoundCloud"><span class="fab fa-soundcloud" aria-hidden="true"></span></a></li>';
 			endif;
 			if ( !empty( $social['yt'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="'.$social['yt'].'" target="_blank" title="YouTube"><span class="fa fa-youtube-play" aria-hidden="true"></span></a></li>';
+				$temp .= '<li class="station-social-icon"><a href="'.$social['yt'].'" target="_blank" title="YouTube"><span class="fab fa-youtube" aria-hidden="true"></span></a></li>';
 			endif;
 			if ( !empty( $social['twitter'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="https://twitter.com/'.$social['twitter'].'" target="_blank" title="Twitter"><span class="fa fa-twitter" aria-hidden="true"></span></a></li>';
+				$temp .= '<li class="station-social-icon"><a href="https://twitter.com/'.$social['twitter'].'" target="_blank" title="Twitter"><span class="fab fa-twitter" aria-hidden="true"></span></a></li>';
 			endif;
 			if ( !empty( $social['fb'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="https://www.facebook.com/'.$social['fb'].'" target="_blank" title="Facebook"><span class="fa fa-facebook" aria-hidden="true"></span></a></li>';
+				$temp .= '<li class="station-social-icon"><a href="https://www.facebook.com/'.$social['fb'].'" target="_blank" title="Facebook"><span class="fab fa-facebook-f" aria-hidden="true"></span></a></li>';
 			endif;
 		endif;
 		if ( !empty( $pod_link ) && $lede ) :

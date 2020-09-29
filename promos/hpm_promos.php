@@ -580,7 +580,7 @@ class HPM_Promos {
 					endif;
 				elseif ( $meta['type'] == 'emergency' ) :
 					$content_esc = str_replace( [ '<p>', '</p>' ], [ '', '' ], $content_esc );
-					$output .= "document.getElementById('fb-root').insertAdjacentHTML('afterend', '<div id=\"emergency\"><span class=\"fa fa-exclamation-circle\" aria-hidden=\"true\"></span> ".$content_esc."</div>');";
+					$output .= "document.getElementById('fb-root').insertAdjacentHTML('afterend', '<div id=\"emergency\"><span class=\"fas fa-exclamation-circle\" aria-hidden=\"true\"></span> ".$content_esc."</div>');";
 				elseif ( $meta['type'] == 'dont-miss' ) :
 					$dont[] = str_replace( [ '<p>', '</p>' ], [ '', '' ], $content_esc );
 				endif;

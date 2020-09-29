@@ -33,19 +33,19 @@ get_header(); ?>
 				<?php
 					if (!empty( $staff['facebook'] ) ) : ?>
 							<div class="social-icon">
-								<a href="<?php echo $staff['facebook']; ?>" target="_blank"><span class="fa fa-facebook" aria-hidden="true"></span></a>
+								<a href="<?php echo $staff['facebook']; ?>" target="_blank"><span class="fab fa-facebook-f" aria-hidden="true"></span></a>
 							</div>
 			<?php
 					endif;
 					if ( !empty( $staff['twitter'] ) ) : ?>
 							<div class="social-icon">
-								<a href="<?php echo $staff['twitter']; ?>" target="_blank"><span class="fa fa-twitter" aria-hidden="true"></span></a>
+								<a href="<?php echo $staff['twitter']; ?>" target="_blank"><span class="fab fa-twitter" aria-hidden="true"></span></a>
 							</div>
 			<?php
 					endif;
 					if ( !empty( $staff['email'] ) ) : ?>
 							<div class="social-icon">
-								<a href="mailto:<?php echo $staff['email']; ?>" target="_blank"><span class="fa fa-envelope" aria-hidden="true"></span></a>
+								<a href="mailto:<?php echo $staff['email']; ?>" target="_blank"><span class="fas fa-envelope" aria-hidden="true"></span></a>
 							</div>
 			<?php
 					endif; ?>

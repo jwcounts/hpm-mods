@@ -11,7 +11,7 @@
 			<head>
 				<title><xsl:value-of select="$title" /> from Houston Public Media</title>
 				<link rel="alternate" type="application/rss+xml" title="{$title}" href="{$feedUrl}" />
-				<link rel="stylesheet" href="https://cdn.hpm.io/assets/css/font-awesome.min.css?ver=4.3.6" type="text/css" media="all" />
+				<link rel="stylesheet" href="https://cdn.hpm.io/assets/fonts/fontawesome/css/all.css" type="text/css" media="all" />
 				<link href="https://cdn.hpm.io/assets/css/style.css" rel="stylesheet" type="text/css" media="all" />
 				<xsl:element name="meta">
 					<xsl:attribute name="charset">UTF-8</xsl:attribute>
@@ -88,23 +88,23 @@
 						<div id="top-donate"><a href="/donate" target="_blank">Donate</a></div>
 						<div id="header-social">
 							<div class="header-social-icon header-facebook">
-								<a href="https://www.facebook.com/houstonpublicmedia" target="_blank"><span class="fa fa-facebook"
+								<a href="https://www.facebook.com/houstonpublicmedia" target="_blank"><span class="fab fa-facebook-f"
 										aria-hidden="true"></span></a>
 							</div>
 							<div class="header-social-icon header-twitter">
-								<a href="https://twitter.com/houstonpubmedia" target="_blank"><span class="fa fa-twitter"
+								<a href="https://twitter.com/houstonpubmedia" target="_blank"><span class="fab fa-twitter"
 										aria-hidden="true"></span></a>
 							</div>
 							<div class="header-social-icon header-instagram">
-								<a href="https://instagram.com/houstonpubmedia" target="_blank"><span class="fa fa-instagram"
+								<a href="https://instagram.com/houstonpubmedia" target="_blank"><span class="fab fa-instagram"
 										aria-hidden="true"></span></a>
 							</div>
 							<div class="header-social-icon header-youtube">
-								<a href="https://www.youtube.com/user/houstonpublicmedia" target="_blank"><span class="fa fa-youtube-play"
+								<a href="https://www.youtube.com/user/houstonpublicmedia" target="_blank"><span class="fab fa-youtube"
 										aria-hidden="true"></span></a>
 							</div>
 						</div>
-						<div id="top-mobile-menu" style=""><span class="fa fa-bars" aria-hidden="true"></span></div>
+						<div id="top-mobile-menu" style=""><span class="fas fa-bars" aria-hidden="true"></span></div>
 						<nav id="site-navigation" class="main-navigation" role="navigation">
 							<div class="menu-main-header-nav-container">
 								<ul id="menu-main-header-nav" class="nav-menu">
@@ -194,19 +194,16 @@
 					</div>
 					<div id="footer-social">
 						<div class="footer-social-icon footer-facebook">
-							<a href="https://www.facebook.com/houstonpublicmedia" target="_blank"><span class="fa fa-facebook" aria-hidden="true"></span></a>
+							<a href="https://www.facebook.com/houstonpublicmedia" target="_blank"><span class="fab fa-facebook-f" aria-hidden="true"></span></a>
 						</div>
 						<div class="footer-social-icon footer-twitter">
-							<a href="https://twitter.com/houstonpubmedia" target="_blank"><span class="fa fa-twitter" aria-hidden="true"></span></a>
+							<a href="https://twitter.com/houstonpubmedia" target="_blank"><span class="fab fa-twitter" aria-hidden="true"></span></a>
 						</div>
 						<div class="footer-social-icon footer-instagram">
-							<a href="https://instagram.com/houstonpubmedia" target="_blank"><span class="fa fa-instagram" aria-hidden="true"></span></a>
+							<a href="https://instagram.com/houstonpubmedia" target="_blank"><span class="fab fa-instagram" aria-hidden="true"></span></a>
 						</div>
 						<div class="footer-social-icon footer-youtube">
-							<a href="https://www.youtube.com/user/houstonpublicmedia" target="_blank"><span class="fa fa-youtube-play" aria-hidden="true"></span></a>
-						</div>
-						<div class="footer-social-icon footer-soundcloud">
-							<a href="https://soundcloud.com/houston-public-media" target="_blank"><span class="fa fa-soundcloud" aria-hidden="true"></span></a>
+							<a href="https://www.youtube.com/user/houstonpublicmedia" target="_blank"><span class="fab fa-youtube" aria-hidden="true"></span></a>
 						</div>
 					</div>
 					<nav id="secondary-navigation" class="footer-navigation" role="navigation">
