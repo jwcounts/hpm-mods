@@ -516,7 +516,8 @@ function hpm_nprapi_output() {
 		return $npr;
 	endif;
 	$output = '';
-	$remote = wp_remote_get( esc_url_raw( "https://api.npr.org/query?id=1001&fields=title,teaser,image,storyDate&requiredAssets=image,audio,text&startNum=0&dateType=story&output=JSON&numResults=4&apiKey=MDAyMTgwNzc5MDEyMjQ4ODE4MjMyYTExMA001" ) );
+	$api_key = get_option( 'ds_npr_api_key' );
+	$remote = wp_remote_get( esc_url_raw( "https://api.npr.org/query?id=1001&fields=title,teaser,image,storyDate&requiredAssets=image,audio,text&startNum=0&dateType=story&output=JSON&numResults=4&apiKey=" . $api_key ) );
 	if ( is_wp_error( $remote ) ) :
 		return "<p></p>";
 	else :
@@ -527,11 +528,11 @@ function hpm_nprapi_output() {
 		$npr_date = strtotime($story['storyDate']['$text']);
 		$output .= '<article class="national-content">';
 		if ( !empty( $story['image'][0]['src'] ) ) :
-			$output .= '<div class="national-image" style="background-image: url('.$story['image'][0]['src'].')"><a href="//www.houstonpublicmedia.org/npr/'.date('Y/m/d/',$npr_date).$story['id'].'/'.sanitize_title($story['title']['$text']).'/" class="post-thumbnail"></a></div><div class="national-text">';
+			$output .= '<div class="national-image" style="background-image: url('.$story['image'][0]['src'].')"><a href="/npr/'.date('Y/m/d/',$npr_date).$story['id'].'/'.sanitize_title($story['title']['$text']).'/" class="post-thumbnail"></a></div><div class="national-text">';
 		else :
 			$output .= '<div class="national-text-full">';
 		endif;
-		$output .= '<h2><a href="//www.houstonpublicmedia.org/npr/'.date('Y/m/d/',$npr_date).$story['id'].'/'.sanitize_title($story['title']['$text']).'/">'.$story['title']['$text'].'</a></h2><p class="screen-reader-text">'
+		$output .= '<h2><a href="/npr/'.date('Y/m/d/',$npr_date).$story['id'].'/'.sanitize_title($story['title']['$text']).'/">'.$story['title']['$text'].'</a></h2><p class="screen-reader-text">'
 		           .$story['teaser']['$text'].'</p></div></article>';
 	endforeach;
 	set_transient( 'hpm_nprapi', $output, 300 );
@@ -858,7 +859,8 @@ function hpm_segments( $name, $date ) {
 			if ( !empty( $transient ) ) :
 				return $transient;
 			else :
-				$url = "https://api.npr.org/query?id={$shows[$name]['id']}&fields=title&output=JSON&numResults=20&date={$date}&apiKey=MDAyMTgwNzc5MDEyMjQ4ODE4MjMyYTExMA001";
+				$api_key = get_option( 'ds_npr_api_key' );
+				$url = "https://api.npr.org/query?id={$shows[$name]['id']}&fields=title&output=JSON&numResults=20&date={$date}&apiKey={$api_key}";
 				$remote = wp_remote_get( esc_url_raw( $url ) );
 				if ( is_wp_error( $remote ) ) :
 					return $output;
