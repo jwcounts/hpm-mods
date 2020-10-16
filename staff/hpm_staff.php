@@ -124,7 +124,7 @@ function hpm_staff_meta_box( $object, $box ) {
 
 	$hpm_staff_meta = get_post_meta( $object->ID, 'hpm_staff_meta', true );
 	if ( empty( $hpm_staff_meta ) ) :
-		$hpm_staff_meta = [ 'title' => '', 'email' => '', 'twitter' => '', 'facebook' => '', 'phone' => '' ];
+		$hpm_staff_meta = [ 'title' => '', 'email' => '', 'twitter' => '', 'facebook' => '', 'linkedin' => '', 'phone' => '' ];
 	endif;
 
 	$hpm_staff_alpha = get_post_meta( $object->ID, 'hpm_staff_alpha', true );
@@ -143,6 +143,7 @@ function hpm_staff_meta_box( $object, $box ) {
 		<li><label for="hpm-staff-email"><?php _e( "Email: ", 'example' ); ?></label> <input type="text" id="hpm-staff-email" name="hpm-staff-email" value="<?PHP echo $hpm_staff_meta['email']; ?>" placeholder="highway@thedanger.zone" style="width: 60%;" /></li>
 		<li><label for="hpm-staff-fb"><?php _e( "Facebook: ", 'example' ); ?></label> <input type="text" id="hpm-staff-fb" name="hpm-staff-fb" value="<?PHP echo $hpm_staff_meta['facebook']; ?>" placeholder="https://facebook.com/first.last" style="width: 60%;" /></li>
 		<li><label for="hpm-staff-twitter"><?php _e( "Twitter: ", 'example' ); ?></label> <input type="text" id="hpm-staff-twitter" name="hpm-staff-twitter" value="<?PHP echo $hpm_staff_meta['twitter']; ?>" placeholder="https://twitter.com/houpubmedia" style="width: 60%;" /></li>
+			<li><label for="hpm-staff-linkedin"><?php _e( "LinkedIn: ", 'example' ); ?></label> <input type="text" id="hpm-staff-linkedin" name="hpm-staff-linkedin" value="<?PHP echo $hpm_staff_meta['linkedin']; ?>" placeholder="https://linkedin.com/in/example" style="width: 60%;" /></li>
 		<li><label for="hpm-staff-phone"><?php _e( "Phone: ", 'example' ); ?></label> <input type="text" id="hpm-staff-phone" name="hpm-staff-phone" value="<?PHP echo $hpm_staff_meta['phone']; ?>" placeholder="(713) 555-5555" style="width: 60%;" /></li>
 		<li><label for="hpm-staff-author"><?php _e( "Author ID:", 'example' ); ?></label> <?php
 			wp_dropdown_users([
@@ -176,6 +177,7 @@ function hpm_staff_save_meta( $post_id, $post ) {
 			'email'		=> ( isset( $_POST['hpm-staff-email'] ) ? sanitize_text_field( $_POST['hpm-staff-email'] ) : '' ),
 			'facebook'	=> ( isset( $_POST['hpm-staff-fb'] ) ? sanitize_text_field( $_POST['hpm-staff-fb'] ) : '' ),
 			'twitter'	=> ( isset( $_POST['hpm-staff-twitter'] ) ? sanitize_text_field( $_POST['hpm-staff-twitter'] ) : '' ),
+			'linkedin'	=> ( isset( $_POST['hpm-staff-linkedin'] ) ? sanitize_text_field( $_POST['hpm-staff-linkedin'] ) : '' ),
 			'phone'	=> ( isset( $_POST['hpm-staff-phone'] ) ? sanitize_text_field( $_POST['hpm-staff-phone'] ) : '')
 		];
 		$hpm_first = ( isset( $_POST['hpm-staff-name-first'] ) ? sanitize_text_field( $_POST['hpm-staff-name-first'] ) : '' );

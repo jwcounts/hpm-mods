@@ -43,6 +43,12 @@ get_header(); ?>
 							</div>
 			<?php
 					endif;
+					if ( !empty( $staff['linkedin'] ) ) : ?>
+							<div class="social-icon">
+								<a href="<?php echo $staff['linkedin']; ?>" target="_blank"><span class="fab fa-linkedin-in" aria-hidden="true"></span></a>
+							</div>
+			<?php
+					endif;
 					if ( !empty( $staff['email'] ) ) : ?>
 							<div class="social-icon">
 								<a href="mailto:<?php echo $staff['email']; ?>" target="_blank"><span class="fas fa-envelope" aria-hidden="true"></span></a>

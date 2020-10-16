@@ -65,6 +65,12 @@ get_header(); ?>
 								<a href="<?php echo $staff['facebook']; ?>" target="_blank"><span class="fab fa-facebook-f" aria-hidden="true"></span></a>
 							</div>
 			<?php
+					endif;
+					if (!empty( $staff['linkedin'] ) ) : ?>
+							<div class="social-icon">
+								<a href="<?php echo $staff['linkedin']; ?>" target="_blank"><span class="fab fa-linkedin-in" aria-hidden="true"></span></a>
+							</div>
+			<?php
 					endif; ?>
 
 						</header><!-- .entry-header -->
