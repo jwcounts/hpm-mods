@@ -336,6 +336,7 @@ class HPM_Podcasts {
 					'radiopublic'  => '',
 					'pcast'        => '',
 					'overcast'     => '',
+					'amazon'       => '',
 					'tunein'       => '',
 					'pandora'      => '',
 					'iheart'       => '',
@@ -355,6 +356,7 @@ class HPM_Podcasts {
 				'radiopublic'  => '',
 				'pcast'        => '',
 				'overcast'     => '',
+				'amazon'       => '',
 				'tunein'       => '',
 				'pandora'      => '',
 				'iheart'       => '',
@@ -410,6 +412,7 @@ class HPM_Podcasts {
 				'radiopublic' => ( isset( $_POST['hpm-podcast-link-radiopublic'] ) ? sanitize_text_field( $_POST['hpm-podcast-link-radiopublic'] ) : '' ),
 				'pcast' => ( isset( $_POST['hpm-podcast-link-pcast'] ) ? sanitize_text_field( $_POST['hpm-podcast-link-pcast'] ) : '' ),
 				'overcast' => ( isset( $_POST['hpm-podcast-link-overcast'] ) ? sanitize_text_field( $_POST['hpm-podcast-link-overcast'] ) : '' ),
+				'amazon' => ( isset( $_POST['hpm-podcast-link-amazon'] ) ? sanitize_text_field( $_POST['hpm-podcast-link-amazon'] ) : '' ),
 				'tunein' => ( isset( $_POST['hpm-podcast-link-overcast'] ) ? sanitize_text_field( $_POST['hpm-podcast-link-tunein'] ) : '' ),
 				'pandora' => ( isset( $_POST['hpm-podcast-link-overcast'] ) ? sanitize_text_field( $_POST['hpm-podcast-link-pandora'] ) : '' ),
 				'iheart' => ( isset( $_POST['hpm-podcast-link-iheart'] ) ? sanitize_text_field( $_POST['hpm-podcast-link-iheart'] ) : '' ),
@@ -1268,6 +1271,9 @@ class HPM_Podcasts {
 			endif;
 			if ( !empty( $pod_link['overcast'] ) ) :
 				$temp .= '<li><a href="'.$pod_link['overcast'].'" target="_blank" title="Subscribe on Overcast"><img src="'.$badges.'overcast.png" alt="Subscribe on Overcast" title="Subscribe on Overcast"></a></li>';
+			endif;
+			if ( !empty( $pod_link['amazon'] ) ) :
+				$temp .= '<li><a href="'.$pod_link['amazon'].'" target="_blank" title="Subscribe on Amazon Music"><img src="'.$badges.'amazon.png" alt="Subscribe on Amazon Music" title="Subscribe on Amazon Music"></a></li>';
 			endif;
 			$temp .= '<li><a href="'.get_permalink( $pod_id ).'" target="_blank" title="Subscribe via RSS"><img src="'.$badges.'rss.png" alt="Subscribe via RSS" title="Subscribe via RSS"></a></li>';
 		endif;

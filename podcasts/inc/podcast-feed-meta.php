@@ -205,6 +205,7 @@
 <p><label for="hpm-podcast-link-radiopublic"><?php _e( "RadioPublic:", 'hpm-podcasts' ); ?></label> <input type="text" id="hpm-podcast-link-radiopublic" name="hpm-podcast-link-radiopublic" value="<?PHP echo $hpm_podcast_link['radiopublic']; ?>" placeholder="http://radiopublic.com/blah" style="width: 60%;" /></p>
 <p><label for="hpm-podcast-link-pcast"><?php _e( "Pocket Casts:", 'hpm-podcasts' ); ?></label> <input type="text" id="hpm-podcast-link-pcast" name="hpm-podcast-link-pcast" value="<?PHP echo $hpm_podcast_link['pcast']; ?>" placeholder="https://pca.st/blah" style="width: 60%;" /></p>
 <p><label for="hpm-podcast-link-overcast"><?php _e( "Overcast:", 'hpm-podcasts' ); ?></label> <input type="text" id="hpm-podcast-link-overcast" name="hpm-podcast-link-overcast" value="<?PHP echo $hpm_podcast_link['overcast']; ?>" placeholder="https://overcast.fm/itunes12345657" style="width: 60%;" /></p>
+<p><label for="hpm-podcast-link-amazon"><?php _e( "Amazon Music:", 'hpm-podcasts' ); ?></label> <input type="text" id="hpm-podcast-link-amazon" name="hpm-podcast-link-amazon" value="<?PHP echo $hpm_podcast_link['amazon']; ?>" placeholder="https://music.amazon.com/podcasts/abcde" style="width: 60%;" /></p>
 <script>
 	jQuery(document).ready(function($){
 		var excerpt = $('#postexcerpt');
