@@ -64,7 +64,10 @@ class HPM_Promos {
 				'can_export'           => false,
 				'capability_type'      => [ 'hpm_promo', 'hpm_promos' ],
 				'map_meta_cap'         => true,
-				'register_meta_box_cb' => [ $this, 'add_meta' ]
+				'register_meta_box_cb' => [ $this, 'add_meta' ],
+				'show_in_graphql' => true,
+				'graphql_single_name' => 'Promo',
+				'graphql_plural_name' => 'Promos'
 			]
 		);
 	}
@@ -604,8 +607,7 @@ class HPM_Promos {
 			topBanner[i].addEventListener('click', function() {
 				var attr = this.id;
 				if ( typeof attr !== typeof undefined && attr !== false) {
-					ga('send', 'event', 'Top Banner', 'click', attr);
-					ga('hpmRollup.send', 'event', 'Top Banner', 'click', attr);
+					gaAll('send', 'event', 'Top Banner', 'click', attr);
 				}
 			});
 		}

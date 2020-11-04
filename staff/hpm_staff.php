@@ -32,7 +32,10 @@ function create_staff_post() {
 		'supports' => [ 'title', 'editor', 'thumbnail', 'author' ],
 		'taxonomies' => [ 'staff_category' ],
 		'capability_type' => [ 'hpm_staffer','hpm_staffers' ],
-		'map_meta_cap' => true
+		'map_meta_cap' => true,
+		'show_in_graphql' => true,
+		'graphql_single_name' => 'Staff',
+		'graphql_plural_name' => 'Staff'
 	]);
 }
 

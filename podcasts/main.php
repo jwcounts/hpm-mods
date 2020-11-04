@@ -518,7 +518,10 @@ class HPM_Podcasts {
 			'supports' => [ 'title', 'editor', 'thumbnail', 'author', 'excerpt' ],
 			'taxonomies' => [ 'post_tag' ],
 			'capability_type' => [ 'hpm_podcast', 'hpm_podcasts' ],
-			'map_meta_cap' => true
+			'map_meta_cap' => true,
+			'show_in_graphql' => true,
+			'graphql_single_name' => 'Podcast',
+			'graphql_plural_name' => 'Podcasts'
 		]);
 
 		register_post_type( 'shows', [
@@ -548,7 +551,10 @@ class HPM_Podcasts {
 			'supports' => [ 'title', 'editor', 'thumbnail' ],
 			'taxonomies' => [ 'post_tag' ],
 			'capability_type' => [ 'hpm_show','hpm_shows' ],
-			'map_meta_cap' => true
+			'map_meta_cap' => true,
+			'show_in_graphql' => true,
+			'graphql_single_name' => 'Show',
+			'graphql_plural_name' => 'Shows'
 		]);
 	}
 
