@@ -178,84 +178,6 @@ function hpmv2_schedules( $station, $date ) {
 }
 
 /*
- * Pull and display what is currently playing on TV and Radio from their respective services
- *
- * Set up Cron job to update these every 2 minutes
- */
-function hpmv2_nowplaying ( $station ) {
-	return get_option( 'hpm_'.$station.'_nowplay' );
-}
-
-function hpmv2_nowplaying_update () {
-	$stations = [ 'news887', 'classical', 'tv8.1', 'tv8.2', 'tv8.3', 'tv8.4' ];
-	foreach ( $stations as $station ) :
-		if ( $station == 'news887' ) :
-			$remote = wp_remote_get( esc_url_raw( "https://api.composer.nprstations.org/v1/widget/519131dee1c8f40813e79115/now?format=json" ) );
-			if ( is_wp_error( $remote ) ) :
-				continue;
-			else :
-				$json = wp_remote_retrieve_body( $remote );
-				$dom = json_decode( $json, true );
-			endif;
-			$output = "<h3>".str_replace('&','&amp;',$dom['onNow']['program']['name'])."</h3>";
-			update_option( 'hpm_'.$station.'_nowplay', $output );
-		elseif ($station == 'classical') :
-			$remote = wp_remote_get( esc_url_raw( "https://api.composer.nprstations.org/v1/widget/51913211e1c8408134a6d347/now?format=json&show_song=true" ) );
-			if ( is_wp_error( $remote ) ) :
-				continue;
-			else :
-				$json = wp_remote_retrieve_body( $remote );
-				$dom = json_decode( $json, true );
-			endif;
-			if ( !empty( $dom['onNow']['song']['ensembles'] ) ) :
-				$ense = $dom['onNow']['song']['ensembles'].' - ';
-			else :
-				$ense = '';
-			endif;
-			if (!empty($dom['onNow']['song'])) :
-				$descs = [];
-				if (!empty($dom['onNow']['song']['composerName'])) :
-					$descs[] = "Composer: ".$dom['onNow']['song']['composerName'];
-				endif;
-
-				if (!empty($dom['onNow']['song']['conductor'])) :
-					$descs[] = "Conductor: ".$dom['onNow']['song']['conductor'];
-				endif;
-
-				if (!empty($dom['onNow']['song']['copyright']) && !empty($dom['onNow']['song']['catalogNumber'])) :
-					$descs[] = "Catalog Number: ".$dom['onNow']['song']['copyright']." ".$dom['onNow']['song']['catalogNumber'];
-				endif;
-
-				$desc = implode( ', ', $descs );
-				$output = "<h3>".$ense.str_replace('&','&amp;',$dom['onNow']['song']['trackName'])."</h3><p>".$desc."</p>";
-			else :
-				$output = "<h3>".$ense.str_replace('&','&amp;',$dom['onNow']['program']['name'])."</h3>";
-			endif;
-			update_option( 'hpm_'.$station.'_nowplay', $output );
-		elseif ( $station == 'tv8.1' || $station == 'tv8.2' || $station == 'tv8.3' || $station == 'tv8.4' ) :
-			$channel = str_replace( 'tv8.', '', $station );
-			$url = 'http://pw.myersinfosys.com/kuht/whats-on-now.xml?col_no='.$channel;
-			$remote = wp_remote_get( esc_url_raw( $url ) );
-			if ( is_wp_error( $remote ) ) :
-				continue;
-			else :
-				$body = wp_remote_retrieve_body( $remote );
-				$xml = simplexml_load_string( $body );
-				$r = $xml->xpath('//ser-title');
-				$output = "<h3>".$r[0]->__toString()."</h3>";
-				update_option( 'hpm_' . $station . '_nowplay', $output );
-			endif;
-		endif;
-	endforeach;
-}
-
-add_action( 'hpm_nowplay_update', 'hpmv2_nowplaying_update' );
-$timestamp = wp_next_scheduled( 'hpm_nowplay_update' );
-if ( empty( $timestamp ) ) :
-	wp_schedule_event( time(), 'hpm_2min', 'hpm_nowplay_update' );
-endif;
-
-/*
  * Log errors in wp-content/debug.log when debugging is enabled.
  */
 if ( !function_exists( 'log_it' ) ) :
@@ -547,137 +469,6 @@ function remove_menus(){
 }
 add_action( 'admin_menu', 'remove_menus' );
 
-function hpm_render_tweet( $j ) {
-	$find = [ '/\n/' ];
-	$replace = [ '<br />' ];
-	$offset = get_option( 'gmt_offset' ) * 3600;
-	$time = strtotime( $j['created_at'] ) + $offset;
-	$date = date( 'F j, Y, g:i A', $time );
-	$date_diff = hpm_time_diff( $time );
-	$text = "<p>".$j['full_text']."</p>";
-	$ent = $j['entities'];
-	$output = '';
-	if ( !empty( $ent['hashtags'] ) ) :
-		foreach( $ent['hashtags'] as $h ) :
-			$text = str_replace( '#'.$h['text'], '<a href="https://twitter.com/hashtag/'.$h['text'].'">#'.$h['text'].'</a>', $text );
-		endforeach;
-	endif;
-	if ( !empty( $ent['symbols'] ) ) :
-		foreach( $ent['symbols'] as $s ) :
-			$text = str_replace( '$'.$s['text'], '<a href="https://twitter.com/search?q=%24'.$s['text'].'&src=ctag">$'.$s['text'].'</a>', $text );
-		endforeach;
-	endif;
-	if ( !empty( $ent['user_mentions'] ) ) :
-		foreach( $ent['user_mentions'] as $u ) :
-			$text = str_replace( '@'.$u['screen_name'], '<a href="https://twitter.com/'.$u['screen_name'].'">@'.$u['screen_name'].'</a>', $text );
-		endforeach;
-	endif;
-	if ( !empty( $ent['urls'] ) ) :
-		foreach( $ent['urls'] as $url ) :
-			if ( $j['is_quote_status'] && strpos( $url['expanded_url'], $j['quoted_status_id_str'] ) !== false ) :
-				$url_r = '';
-			else :
-				$url_r = '<a href="'.$url['expanded_url'].'">'.$url['url'].'</a>';
-			endif;
-			$text = str_replace( $url['url'], $url_r, $text );
-		endforeach;
-	endif;
-	if ( !empty( $ent['media'] ) ) :
-		$text = str_replace( $ent['media'][0]['url'], '', $text );
-		$media_out = '<div class="tweet-photos tweet-photos-'.count( $j['extended_entities']['media'] ).'">';
-		foreach( $j['extended_entities']['media'] as $k => $m ) :
-			$media_out .= '<div class="tweet-photo" style="background-image: url('.$m['media_url_https'].');"><a href="'.$m['expanded_url'].'"></a></div>';
-		endforeach;
-		$media_out .= '</div>';
-		$text .= $media_out;
-	endif;
-	$text = preg_replace( $find, $replace, $text );
-	$output .= '<div class="tweet-head"><div class="tweet-avi" style="background-image: url('.$j['user']['profile_image_url_https'].');"><a href="https://twitter.com/'.$j['user']['screen_name'].'" target="_blank"></a></div><div class="tweet-user"><h2><a href="https://twitter.com/'.$j['user']['screen_name'].'" target="_blank">'.$j['user']['name'].'</a></h2><h3><a href="https://twitter.com/'.$j['user']['screen_name'].'" target="_blank">@'.$j['user']['screen_name'].'</a></h3></div><div class="tweet-time"><span class="tweet-time-full" title="'.$date.'">'.$date_diff.'</span></div></div><div class="tweet-body">'.$text.'</div>';
-	return $output;
-}
-
-function hpm_time_diff( $then ) {
-	if ( !is_numeric( $then ) ) :
-		return 'Unix times only plz';
-	else :
-		$c = time();
-		$offset = get_option( 'gmt_offset' ) * 3600;
-		$now = $c + $offset;
-		if ( $now < $then ) :
-			return "Whoa there cowboy, check your dates";
-		else :
-			$diff = $now - $then;
-			if ( $diff < 60 ) :
-				return $diff."s";
-			elseif ( $diff >= 60 && $diff < 3600 ) :
-				return round( $diff/60 )."m";
-			elseif ( $diff >= 3600 && $diff < 86400 ) :
-				return round( $diff/3600 )."h";
-			elseif ( $diff >= 86400 && $diff < 31536000 ) :
-				return round( $diff/86400 )."d";
-			else :
-				return round( $diff/31536000 )."y";
-			endif;
-		endif;
-	endif;
-}
-
-function hpm_tweets( $account, $num ) {
-	if ( empty( $account ) ) :
-		return "Please provide an account name";
-	endif;
-	if ( empty( $num ) ) :
-		$num = 20;
-	endif;
-	$output = '';
-	// $url = 'https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name='.$account.'&count='.$num.'&include_rts=true&tweet_mode=extended';
-	$url = 'https://api.twitter.com/1.1/search/tweets.json?q=%23txdecides%20-RT&result_type=recent&count=25&include_entities=true&tweet_mode=extended';
-	$opts = [ 'headers' => [ "Authorization" => "Bearer AAAAAAAAAAAAAAAAAAAAAHC03AAAAAAAZo5NNz4NqlK6%2FjlJjcnhScYP3FQ%3DLR2gnzwqO2dn1SUGolipkUULalisg6DOpRfKlEVqzvYw7XtKfs" ] ];
-	$remote = wp_remote_get( esc_url_raw( $url ), $opts );
-	if ( is_wp_error( $remote ) ) :
-		echo "Sorry, no tweets right now.";
-	else :
-		$raw = wp_remote_retrieve_body( $remote );
-		$json = json_decode( $raw, true );
-		// $output .= '<aside id="twitter-home"><h1>Tweets by <a href="https://twitter.com/'.$account.'">@'.$account.'</a></h1><div id="twitter-wrap">';
-		$output .= '<aside id="twitter-home"><h1><a href="https://twitter.com/search?f=tweets&q=%23txdecides&src=typd">#TXDecides</a></h1><div id="twitter-wrap">';
-		foreach ( $json['statuses'] as $j ) :
-			if ( !empty( $j['retweeted_status'] ) ) :
-				$r = $j['retweeted_status'];
-				if ( $r['is_quote_status'] ) :
-					$output .= '<div class="tweet">'.hpm_render_tweet( $r ).'<div class="tweet">'.hpm_render_tweet( $r['quoted_status'] ).'</div><p class="tweet-rt">🔄 Retweeted by <a
-href="https://twitter.com/'.$j['user']['screen_name'].'" target="_blank">'.$j['user']['name'].'</a></p></div>';
-				else :
-					$output .= '<div class="tweet">'.hpm_render_tweet( $r ).'<p class="tweet-rt">🔄 Retweeted by <a href="https://twitter.com/'.$j['user']['screen_name'].'"
-target="_blank">'.$j['user']['name'].'</a></p></div>';
-				endif;
-			elseif ( $j['is_quote_status'] ) :
-				$output .= '<div class="tweet">'.hpm_render_tweet( $j ).'<div class="tweet">'.hpm_render_tweet( $j['quoted_status'] ).'</div></div>';
-			else :
-				$output .= '<div class="tweet">'.hpm_render_tweet( $j ).'</div>';
-			endif;
-		endforeach;
-		// $output .= '</div><p style="text-align:center;"><a href="https://twitter.com/'.$account.'" class="readmorelarge">Read More</a></p></aside>';
-		$output .= '</div><p style="text-align:center;padding-top:0.5em;"><a href="https://twitter.com/search?f=tweets&q=%23txdecides&src=typd" class="readmorelarge">Read More</a></p></aside>';
-	endif;
-	update_option( 'hpm_'.$account.'_tweets', $output, false );
-}
-
-function hpm_tweet_dl() {
-	hpm_tweets( 'houstonpubmedia', 25 );
-}
-
-add_action( 'hpm_tweets', 'hpm_tweet_dl' );
-$timestamp = wp_next_scheduled( 'hpm_tweets' );
-if ( empty( $timestamp ) ) :
-	wp_schedule_event( time(), 'hpm_1min', 'hpm_tweets' );
-endif;
-
-function tx_decides_twitter() {
-	return get_option( 'hpm_houstonpubmedia_tweets' );
-}
-add_shortcode( 'tx_decides', 'tx_decides_twitter' );
-
 function hpm_election_night() {
 	$args = [
 		'p' => 248126,
@@ -795,8 +586,8 @@ function hpm_segments( $name, $date ) {
 			'id' => 65
 		],
 		'Texas Standard' => [
-			'source' => 'regex',
-			'id' => 'http://www.texasstandard.org/stories/texas-standard-for-'
+			'source' => 'wp-rss',
+			'id' => 'https://www.texasstandard.org/'
 		],
 		'Fresh Air' => [
 			'source' => 'npr',
@@ -807,7 +598,7 @@ function hpm_segments( $name, $date ) {
 		],
 		'Think' => [
 			'source' => 'wp',
-			'id' => 'http://think.kera.org/wp-json/wp/v2/posts'
+			'id' => 'https://think.kera.org/wp-json/wp/v2/posts'
 		],
 		'Here and Now' => [
 			'source' => 'npr',
@@ -886,12 +677,34 @@ function hpm_segments( $name, $date ) {
 			if ( $name == 'BBC World Service' ) :
 				$offset = str_replace( '-', '', get_option( 'gmt_offset' ) );
 				$output .= "<div class=\"progsegment\"><h4>Schedule</h4><ul><li><a href=\"{$shows[$name]['id']}{$dx[0]}/{$dx[1]}/{$dx[2]}?utcoffset=-0{$offset}:00\" target=\"_blank\">BBC Schedule for {$date}</a></li></ul></div>";
-			elseif ( $name == 'Texas Standard' ) :
-				$dstr = date( 'F-j-Y', $du );
-				$dstrdisp = date( 'F j, Y', $du );
-				$output .= "<div class=\"progsegment\"><h4>Schedule</h4><ul><li><a href=\"{$shows[$name]['id']}".strtolower( $dstr )."/\" target=\"_blank\">Texas Standard for ".$dstrdisp."</a></li></ul></div>";
-			else :
 				return $output;
+			endif;
+		elseif ( $shows[$name]['source'] == 'wp-rss' ) :
+			$transient = get_transient( $trans );
+			if ( !empty( $transient ) ) :
+				return $transient;
+			else :
+				$url = $shows[$name]['id']. str_replace( '-', '/', $date ) . "/feed/";
+				$remote = wp_remote_get( esc_url_raw( $url ) );
+				if ( is_wp_error( $remote ) ) :
+					return $output;
+				else :
+					$dom = simplexml_load_string( wp_remote_retrieve_body( $remote ) );
+					$json = json_decode( json_encode( $dom ), true );
+					$title = strtolower( 'Texas Standard For ' . date( 'F j, Y', $du ) );
+					$set = false;
+					if ( !empty( $json ) ) :
+						foreach ( $json['channel']['item'] as $item ) :
+							if ( !$set ) :
+								if ( strtolower( $item['title'] ) === $title ) :
+									$output .= '<div class="progsegment"><h4>Program for '. $date . '</h4><ul><li><a href="'.$item['link'].'" target="_blank">' . $item['title'] .'</a></li></ul></div>';
+									$set = true;
+								endif;
+							endif;
+						endforeach;
+					endif;
+				endif;
+				set_transient( $trans, $output, HOUR_IN_SECONDS );
 			endif;
 		elseif ( $shows[$name]['source'] == 'wp' ) :
 			$transient = get_transient( $trans );
