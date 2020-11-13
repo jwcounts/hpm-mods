@@ -64,7 +64,7 @@
 					<xsl:attribute name="type">text/javascript</xsl:attribute>
 					<xsl:attribute name="src">https://cdn.hpm.io/assets/js/main.js?ver=20181129</xsl:attribute>
 				</xsl:element>
-				<style type="text/css">.pod-desc { font: normal 1.125em/1.125em 'MiloOT-Medi',arial,sans-serif; color: rgb(142,144,144); }</style>
+				<style type="text/css">.pod-desc { font: 500 1.125em/1.125em var(--hpm-font-main); color: rgb(142,144,144); }</style>
 			</head>
 			<xsl:apply-templates select="rss/channel" />
 		</xsl:element>
@@ -172,7 +172,7 @@
 										<h2>Subscribe Now!</h2>
 										<p>Do a search for "<strong><xsl:value-of select="$title" /></strong>" or "<strong>Houston Public Media</strong>" in your podcast app of choice</p>
 										<p>Or copy/paste this address:</p>
-										<p><form><input type="text" value="{$feedUrl}" style="padding: 0.5em; width: 100%; font-family: 'MiloOT',arial,helvetica,sans-serif;" /></form></p>
+										<p><form><input type="text" value="{$feedUrl}" style="padding: 0.5em; width: 100%; font-family: var(--hpm-font-main);" /></form></p>
 									</div>
 								</div>
 							</article>
