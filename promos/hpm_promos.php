@@ -676,7 +676,7 @@ class HPM_Promos {
 			display: inline;
 		}
 	}
-	@media screen and (min-width: 50.0625em) {
+	@media screen and (min-width: 52.5em) {
 		.hpm-promo-mobile-hide,
 		.column-right div.hpm-promo-mobile-hide {
 			display: block;

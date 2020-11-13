@@ -803,7 +803,7 @@ function hpm_image_preview_page() {
 		<title>HPM Featured Image Preview</title>
 		<link rel="stylesheet" id="hpmv2-style-css"  href="https://cdn.hpm.io/assets/css/style.css?ver=<?php echo $versions['css']; ?>" type="text/css" media="all" />
 		<style>
-			@media screen and (min-width: 50.0625em) {
+			@media screen and (min-width: 52.5em) {
 				#float-wrap {
     				max-width: 50em;
 					margin: 1em auto;
