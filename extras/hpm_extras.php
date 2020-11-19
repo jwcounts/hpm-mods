@@ -45,7 +45,7 @@ function hpm_versions() {
 			$json = json_decode( $api, TRUE );
 		endif;
 
-		set_transient( 'hpm_versions', $json, 5 * 60 );
+		set_transient( 'hpm_versions', $json, 3 * 60 );
 		return $json;
 	endif;
 }
