@@ -607,7 +607,9 @@ class HPM_Promos {
 			topBanner[i].addEventListener('click', function() {
 				var attr = this.id;
 				if ( typeof attr !== typeof undefined && attr !== false) {
-					gaAll('send', 'event', 'Top Banner', 'click', attr);
+					ga('hpmprod.send', 'event', 'Top Banner', 'click', attr);
+					ga('hpmRollupprod.send', 'event', 'Top Banner', 'click', attr);
+					ga('hpmWebAmpprod.send', 'event', 'Top Banner', 'click', attr);
 				}
 			});
 		}
