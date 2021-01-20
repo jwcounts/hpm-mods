@@ -1275,7 +1275,7 @@ class HPM_Podcasts {
 			if ( !empty( $pod_link['amazon'] ) ) :
 				$temp .= '<li><a href="'.$pod_link['amazon'].'" target="_blank" title="Subscribe on Amazon Music"><img src="'.$badges.'amazon.png" alt="Subscribe on Amazon Music" title="Subscribe on Amazon Music"></a></li>';
 			endif;
-			$temp .= '<li><a href="'.get_permalink( $pod_id ).'" target="_blank" title="Subscribe via RSS"><img src="'.$badges.'rss.png" alt="Subscribe via RSS" title="Subscribe via RSS"></a></li>';
+			$temp .= '<li><a href="' . ( !empty( $pod_link['rss-override'] ) ? $pod_link['rss-override'] : get_permalink( $pod_id ) ).'" target="_blank" title="Subscribe via RSS"><img src="'.$badges.'rss.png" alt="Subscribe via RSS" title="Subscribe via RSS"></a></li>';
 		endif;
 		if ( !empty( $show_id ) ) :
 			$social = get_post_meta( $show_id, 'hpm_show_social', true );
