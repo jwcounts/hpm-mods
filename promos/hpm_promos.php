@@ -614,8 +614,14 @@ class HPM_Promos {
 			});
 		}
 	}());
+	jQuery(document).ready(function($){
+		$('#emergency').slideDown();
+	});
 </script>
 <style>
+	#emergency {
+		display: none;
+	}
 	.hpm-promo-mobile-hide {
 		display: none;
 	}
