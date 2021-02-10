@@ -77,6 +77,11 @@ class HPM_Podcasts {
 				'callback' => [ $this, 'generate' ]
 			] );
 
+			register_rest_route( 'hpm-podcast/v1', '/list', [
+				'methods'  => 'GET',
+				'callback' => [ $this, 'list' ]
+			] );
+
 			register_rest_route( 'hpm-podcast/v1', '/upload/(?P<feed>[a-zA-Z0-9\-_]+)/(?P<id>[\d]+)/(?P<attach>[\d]+)', [
 				'methods'  => 'GET',
 				'callback' => [ $this, 'upload'],
@@ -95,16 +100,6 @@ class HPM_Podcasts {
 				'callback' => [ $this, 'upload_progress'],
 				'args' => [
 					'id' => [
-						'required' => true
-					]
-				]
-			] );
-
-			register_rest_route( 'hpm-podcast/v1', '/newscast/(?P<hash>[a-zA-Z\$\/\.0-9]+)', [
-				'methods'  => 'GET',
-				'callback' => [ $this, 'newscast'],
-				'args' => [
-					'hash' => [
 						'required' => true
 					]
 				]
@@ -1083,137 +1078,6 @@ class HPM_Podcasts {
 	}
 
 	/**
-	 * Generate salt for newscast update request
-	 *
-	 * @return string
-	 */
-	public function newscast_salt() {
-		$now = getdate();
-		$salt = $now['year'].$now['month'].$now['weekday'].$now['mday'].$now['hours'].'bobafett';
-		return '$2y$07$'.$salt.'$';
-	}
-
-	/**
-	 * Grab recorded newscasts to use in podcast feed
-	 *
-	 * @param WP_REST_Request $request This function accepts a rest request to process data.
-	 *
-	 * @return mixed
-	 */
-	public function newscast( WP_REST_Request $request ) {
-		$pass = $this->options['newscast']['password'];
-		$hash = crypt( $pass, $this->newscast_salt() );
-		if ( !hash_equals( $hash, $request['hash'] ) ) :
-			return new WP_Error( 'rest_api_sad', esc_html__( 'Access is denied', 'hpm-podcasts' ), [ 'status' => 401 ] );
-		endif;
-
-		// Set up time and file location variables
-		$t = time();
-		$offset = get_option('gmt_offset')*3600;
-		$t = $t + $offset;
-		$now = getdate($t);
-		$ds = DIRECTORY_SEPARATOR;
-		$dir = wp_upload_dir();
-		$save = $dir['basedir'];
-
-		// Pull newscast file url, download the file, and save it locally
-		$url = $this->options['newscast']['url'];
-		$parse = parse_url( $url );
-		$path = pathinfo( $parse['path'] );
-		$filename = date( 'YmdH', $now[0] ) . $path['basename'];
-		$local = $save . $ds . $filename;
-		$remote = wp_remote_get( esc_url_raw( $url ) );
-		if ( is_wp_error( $remote ) ) :
-			return new WP_Error( 'rest_api_sad', esc_html__( 'Error downloading newscast file', 'hpm-podcasts' ), [ 'status' => 500 ] );
-		else :
-			$remote_body = wp_remote_retrieve_body( $remote );
-		endif;
-		if ( !file_put_contents( $local, $remote_body ) ) :
-			return new WP_Error( 'rest_api_sad', esc_html__( 'Error saving newscast file on local server', 'hpm-podcasts' ), [ 'status' => 500 ] );
-		endif;
-
-		$metadata = $this->audio_meta( $local );
-
-		$catslug = get_post_meta( $this->options['newscast']['feed'], 'hpm_pod_cat', true );
-		$feed = get_post_field( 'post_name', get_post( $this->options['newscast']['feed'] ) );
-
-		$short = $this->options['credentials']['sftp'];
-		if ( defined( 'HPM_SFTP_PASSWORD' ) ) :
-			$ftp_password = HPM_SFTP_PASSWORD;
-		elseif ( !empty( $short['password'] ) ) :
-			$ftp_password = $short['password'];
-		else :
-			return new WP_Error( 'rest_api_sad', esc_html__( 'Cannot upload file to SFTP, no password provided.', 'hpm-podcasts' ), [ 'status' => 500 ] );
-		endif;
-		try {
-			$con = ftp_connect( $short['host'] );
-			if ( false === $con ) :
-				throw new Exception( "Unable to connect to the FTP server. Please check your FTP Host URL or IP and try again." );
-			endif;
-			$loggedIn = ftp_login( $con, $short['username'], $ftp_password );
-			ftp_pasv( $con, true );
-			if ( false === $loggedIn ) :
-				throw new Exception( "Unable to log in to the FTP server. Please check your credentials and try again." );
-			endif;
-			if ( !empty( $short['folder'] ) ) :
-				if ( !ftp_chdir( $con, $short['folder'] ) ) :
-					ftp_mkdir( $con, $short['folder'] );
-					ftp_chdir( $con, $short['folder'] );
-				endif;
-			endif;
-			if ( !ftp_chdir( $con, $feed ) ) :
-				ftp_mkdir( $con, $feed );
-				ftp_chdir( $con, $feed );
-			endif;
-
-			if ( ! ftp_put( $con, $filename, $local, FTP_BINARY ) ) :
-				throw new Exception( "The file could not be saved on the FTP server. Please verify your permissions on that server and try again." );
-			endif;
-			ftp_close( $con );
-		} catch ( Exception $e ) {
-			$message = $e->getMessage();
-		}
-		if ( !empty( $message ) ) :
-			return new WP_Error( 'rest_api_sad', esc_html__( $message, 'hpm-podcasts' ), [ 'status' => 500 ] );
-		endif;
-
-		$sg_url = $short['url'].'/'.$feed.'/'.$filename;
-		unlink( $local );
-
-
-		$args = [
-			'post_title' => 'HPM Local Newscast for '.date( 'g a, l, F j, Y', $now[0] ),
-			'post_content' => '[audio mp3="' . $sg_url . '"][/audio]<p>Local news updates from the Houston Public Media Newsroom. Last updated at ' . date( 'g a, l, F j, Y', $now[0] ) . '</p>',
-			'post_category' => [ $catslug ],
-			'post_date' => date( 'Y-m-d H:i:s', $now[0] ),
-			'post_type' => 'post',
-			'post_status' => 'publish',
-			'comment_status' => 'closed',
-			'tags_input' => [ 'houston', 'houston public media', 'local news', 'newscasts',  'texas' ],
-			'post_author' => 89
-		];
-		// if ( $podeps->have_posts() ) :
-		// 	wp_delete_post( $podeps->post->ID, true );
-		// endif;
-		$post_id = wp_insert_post( $args );
-
-		if ( is_wp_error( $post_id ) ) :
-			return new WP_Error( 'rest_api_sad', esc_html__( 'Error updating newscast post.', 'hpm-podcasts' ), [ 'status' => 500 ] );
-		endif;
-
-		if ( !empty( $sg_url ) ) :
-			$enclose = [
-				'url' => $sg_url,
-				'filesize' => $metadata['filesize'],
-				'mime' => $metadata['mime_type'],
-				'length' => $metadata['length_formatted']
-			];
-			update_post_meta( $post_id, 'hpm_podcast_enclosure', $enclose );
-		endif;
-
-		return rest_ensure_response( [ 'code' => 'rest_api_success', 'message' => esc_html__( 'Newscast uploaded successfully.', 'hpm-podcasts' ), 'data' => [ 'status' => 200 ] ] );
-	}
-	/**
 	 * Generate podcast feed promo at the bottom of article content
 	 *
 	 * @return string
@@ -1337,6 +1201,74 @@ class HPM_Podcasts {
 <?php
 			endif;
 		endif;
+	}
+
+	/**
+	 * Return list of active podcast feeds with feed URLs and most recent files
+	 *
+	 * @return string
+	 */
+	public function list( WP_REST_Request $request = null ) {
+		// $list = get_transient( 'hpm_podcasts_list' );
+		// if ( !empty( $list ) ) :
+		// 	return rest_ensure_response( [ 'code' => 'rest_api_success', 'message' => esc_html__( 'Podcast feed list', 'hpm-podcasts' ), 'data' => [ 'list' => $list, 'status' =>	200 ] ] );
+		// endif;
+		$protocol = 'https://';
+		$_SERVER['HTTPS'] = 'on';
+		$list = [];
+
+		$podcasts = new WP_Query([
+			'post_type' => 'podcasts',
+			'post_status' => 'publish',
+			'posts_per_page' => -1,
+			'meta_query' => [[
+				'key' => 'hpm_pod_prod',
+				'compare' => '=',
+				'value' => 'internal'
+			]]
+		]);
+		if ( $podcasts->have_posts() ) :
+			global $post;
+			while ( $podcasts->have_posts() ) :
+				$temp = [
+					'name' => '',
+					'slug' => '',
+					'description' => '',
+					'feed' => '',
+					'archive' => '',
+					'latest_episode' => [
+						'audio' => '',
+						'title' => '',
+						'link' => ''
+					],
+					'external_links' => []
+				];
+				$podcasts->the_post();
+				$pod_id = get_the_ID();
+				$podlink = get_post_meta( $pod_id, 'hpm_pod_link', true );
+				$last_id = get_post_meta( $pod_id, 'hpm_pod_last_id', true );
+				$temp['feed'] = ( !empty( $podlink['rss-override'] ) ? $podlink['rss-override'] : get_permalink( $pod_id ) );
+				$temp['archive'] = $podlink['page'];
+				$temp['slug'] = $post->post_name;
+				unset( $podlink['page'] );
+				unset( $podlink['rss-override'] );
+				unset( $podlink['categories'] );
+				unset( $podlink['limit'] );
+				unset( $podlink['type'] );
+				$temp['external_links'] = $podlink;
+				$temp['name'] = get_the_title();
+				$temp['description'] = get_the_content();
+				$a_meta = get_post_meta( $last_id['id'], 'hpm_podcast_enclosure', true );
+				$temp['latest_episode']['audio'] = str_replace( [ 'http://', 'https://' ], [ $protocol, $protocol ], $a_meta['url'] );
+				$temp['latest_episode']['title'] = get_the_title( $last_id['id'] );
+				$temp['latest_episode']['link'] = get_the_permalink( $last_id['id'] );
+				$list[] = $temp;
+			endwhile;
+		endif;
+		set_transient( 'hpm_podcasts_list', $list, 86400 );
+		return rest_ensure_response( [ 'code' => 'rest_api_success', 'message' => esc_html__( 'Podcast feed list', 'hpm-podcasts' ), 'data' => [ 'list' => $list, 'status' => 200 ] ] );
+
+		// return new WP_Error( 'rest_api_sad', esc_html__( 'No podcast feeds have been defined. Please create one and try again.', 'hpm-podcasts' ), [ 'status' => 500 ] );
 	}
 }
 
