@@ -688,7 +688,7 @@ class HPM_Promos {
 		.hpm-promo-mobile-hide,
 		.column-right div.hpm-promo-mobile-hide {
 			display: block;
-			margin: 0 auto;
+			margin: 0 auto 1em;
 			background-color: white;
 		}
 		.column-right div.hpm-promo-mobile-hide:nth-last-child(5) {
