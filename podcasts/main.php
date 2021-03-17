@@ -456,7 +456,7 @@ class HPM_Podcasts {
 			update_post_meta( $post_id, 'hpm_show_meta', $hpm_show );
 			update_post_meta( $post_id, 'hpm_shows_cat', $hpm_shows_cat );
 			update_post_meta( $post_id, 'hpm_shows_top', $hpm_shows_top );
-		else :
+		elseif ( $post->post_type == 'post' ) :
 			$hpm_podcast = [
 				'feed' => ( !empty( $_POST['hpm-podcast-ep-feed'] ) ? $_POST['hpm-podcast-ep-feed'] : '' ),
 				'title' => ( !empty( $_POST['hpm-podcast-title'] ) ? preg_replace( '/(&)([^amp])/', '&amp;$2', $_POST['hpm-podcast-title'] ) : '' ),
@@ -1209,10 +1209,10 @@ class HPM_Podcasts {
 	 * @return string
 	 */
 	public function list( WP_REST_Request $request = null ) {
-		// $list = get_transient( 'hpm_podcasts_list' );
-		// if ( !empty( $list ) ) :
-		// 	return rest_ensure_response( [ 'code' => 'rest_api_success', 'message' => esc_html__( 'Podcast feed list', 'hpm-podcasts' ), 'data' => [ 'list' => $list, 'status' =>	200 ] ] );
-		// endif;
+		$list = get_transient( 'hpm_podcasts_list' );
+		if ( !empty( $list ) ) :
+			return rest_ensure_response( [ 'code' => 'rest_api_success', 'message' => esc_html__( 'Podcast feed list', 'hpm-podcasts' ), 'data' => [ 'list' => $list, 'status' =>	200 ] ] );
+		endif;
 		$protocol = 'https://';
 		$_SERVER['HTTPS'] = 'on';
 		$list = [];
