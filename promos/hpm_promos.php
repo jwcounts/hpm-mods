@@ -430,7 +430,9 @@ class HPM_Promos {
 		$output = '';
 		$dont = [];
 		$lightbox = $fullwidth = 0;
-
+		if ( $wp_query->post->post_type == 'embeds' ) :
+			return $output;
+		endif;
 		if ( $wp_global->is_page || $wp_global->is_single ) :
 			$page_id = $wp_global->get_queried_object_id();
 			$anc = get_post_ancestors( $page_id );
