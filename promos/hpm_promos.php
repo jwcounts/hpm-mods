@@ -149,8 +149,8 @@ class HPM_Promos {
 		<h3><?PHP _e( "Where do you want your element to show up?", 'hpmv2' ); ?></h3>
 		<p><label for="hpm_promo[location]"><?php _e( "Location:", 'hpmv2' ); ?></label>
 			<select id="hpm_promo[location]" name="hpm_promo[location]">
-				<option value="homepage" <?PHP selected( $hpm_promo['location'], 'homepage', TRUE ); ?>>Homepage Only</option>
 				<option value="any" <?PHP selected( $hpm_promo['location'], 'any', TRUE ); ?>>Any Page</option>
+				<option value="homepage" <?PHP selected( $hpm_promo['location'], 'homepage', TRUE ); ?>>Homepage Only</option>
 			</select>
 		</p>
 		<h3><?PHP _e( "What type of banner are you creating?", 'hpmv2' ); ?></h3>
