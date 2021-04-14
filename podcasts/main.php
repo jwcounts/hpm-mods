@@ -1236,6 +1236,11 @@ class HPM_Podcasts {
 					'description' => '',
 					'feed' => '',
 					'archive' => '',
+					'image' => [
+						'full' => [],
+						'medium' => [],
+						'thumbnail' => []
+					],
 					'latest_episode' => [
 						'audio' => '',
 						'title' => '',
@@ -1247,6 +1252,24 @@ class HPM_Podcasts {
 				$pod_id = get_the_ID();
 				$podlink = get_post_meta( $pod_id, 'hpm_pod_link', true );
 				$last_id = get_post_meta( $pod_id, 'hpm_pod_last_id', true );
+				$image_full = wp_get_attachment_image_src( get_post_thumbnail_id(), 'full' );
+				$image_medium = wp_get_attachment_image_src( get_post_thumbnail_id(), 'medium' );
+				$image_thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id(), 'thumbnail' );
+				$temp['image']['full'] = [
+					'url' => $image_full[0],
+					'width' => $image_full[1],
+					'height' => $image_full[2]
+				];
+				$temp['image']['medium'] = [
+					'url' => $image_medium[0],
+					'width' => $image_medium[1],
+					'height' => $image_medium[2]
+				];
+				$temp['image']['thumbnail'] = [
+					'url' => $image_thumbnail[0],
+					'width' => $image_thumbnail[1],
+					'height' => $image_thumbnail[2]
+				];
 				$temp['feed'] = ( !empty( $podlink['rss-override'] ) ? $podlink['rss-override'] : get_permalink( $pod_id ) );
 				$temp['archive'] = $podlink['page'];
 				$temp['slug'] = $post->post_name;
