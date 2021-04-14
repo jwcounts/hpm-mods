@@ -788,7 +788,7 @@ class HPM_Podcasts {
 				if ( $feed_json ) :
 					$json['title'] = get_the_title();
 					$json['home_page_url'] = $podlink['page'];
-					$json['feed_url'] = get_the_permalink().'/feed/json';
+					$json['feed_url'] = get_the_permalink().'feed/json';
 					$json['description'] = get_the_content();
 					$json['icon'] = $main_image[0];
 					$json['favicon'] = $favicon[0];
