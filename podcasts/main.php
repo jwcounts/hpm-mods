@@ -1288,7 +1288,7 @@ class HPM_Podcasts {
 				$list[] = $temp;
 			endwhile;
 		endif;
-		set_transient( 'hpm_podcasts_list', $list, 86400 );
+		set_transient( 'hpm_podcasts_list', $list, 3600 );
 		return rest_ensure_response( [ 'code' => 'rest_api_success', 'message' => esc_html__( 'Podcast feed list', 'hpm-podcasts' ), 'data' => [ 'list' => $list, 'status' => 200 ] ] );
 
 		// return new WP_Error( 'rest_api_sad', esc_html__( 'No podcast feeds have been defined. Please create one and try again.', 'hpm-podcasts' ), [ 'status' => 500 ] );
