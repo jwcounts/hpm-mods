@@ -52,9 +52,6 @@ class HPM_Podcasts {
 		// Create menu in Admin Dashboard
 		add_action( 'admin_menu', [ $this, 'create_menu' ] );
 
-		//Adds meta query to always list podcast archive in alphabetical order
-		add_action( 'pre_get_posts', [ $this, 'meta_query' ] );
-
 		// Add filter for the_content to display podcast tune-in/promo
 		add_filter( 'the_content', [ $this, 'article_footer' ] );
 		add_filter( 'get_the_excerpt', [ $this, 'remove_foot_filter' ], 9 );
@@ -80,6 +77,16 @@ class HPM_Podcasts {
 			register_rest_route( 'hpm-podcast/v1', '/list', [
 				'methods'  => 'GET',
 				'callback' => [ $this, 'list' ]
+			] );
+
+			register_rest_route( 'hpm-podcast/v1', '/list/(?P<feed>[a-zA-Z0-9\-_]+)', [
+				'methods'  => 'GET',
+				'callback' => [ $this, 'json_feed' ],
+				'args' => [
+					'feed' => [
+						'required' => true
+					]
+				]
 			] );
 
 			register_rest_route( 'hpm-podcast/v1', '/upload/(?P<feed>[a-zA-Z0-9\-_]+)/(?P<id>[\d]+)/(?P<attach>[\d]+)', [
@@ -883,7 +890,7 @@ class HPM_Podcasts {
 						'date_published' => get_the_date( 'c', '', '', false),
 						'date_modified' => get_the_modified_date( 'c', '', '', false),
 						'author' => coauthors( '; ', '; ', '', '', false ),
-						'thumbnail' => $pod_image,
+						'thumbnail' => $pod_image[0],
 						'attachments' => [
 							'url' => $media_file,
 							'mime_type' => $a_meta['mime'],
@@ -973,19 +980,6 @@ class HPM_Podcasts {
 		else :
 			return new WP_Error( 'rest_api_sad', esc_html__( 'No podcast feeds have been defined. Please create one and try again.', 'hpm-podcasts' ), [ 'status' => 500 ] );
 		endif;
-	}
-
-	/*
-	 * Display podcasts and shows alphabetically instead of by creation date
-	 */
-	public function meta_query( $query ) {
-		/* if ( $query->is_archive() && $query->is_main_query() ) :
-			$pod_check = $query->get( 'post_type' );
-			if ( $pod_check == 'podcasts' || $pod_check == 'shows' ) :
-				$query->set( 'orderby', 'post_title' );
-				$query->set( 'order', 'ASC' );
-			endif;
-		endif; */
 	}
 
 	/**
@@ -1235,6 +1229,7 @@ class HPM_Podcasts {
 					'slug' => '',
 					'description' => '',
 					'feed' => '',
+					'feed_json' => '',
 					'archive' => '',
 					'image' => [
 						'full' => [],
@@ -1285,13 +1280,36 @@ class HPM_Podcasts {
 				$temp['latest_episode']['audio'] = str_replace( [ 'http://', 'https://' ], [ $protocol, $protocol ], $a_meta['url'] );
 				$temp['latest_episode']['title'] = get_the_title( $last_id['id'] );
 				$temp['latest_episode']['link'] = get_the_permalink( $last_id['id'] );
+				$temp['feed_json'] = WP_HOME.'/wp-json/hpm-podcast/v1/list/'.$post->post_name;
 				$list[] = $temp;
 			endwhile;
+		else :
+			return new WP_Error( 'rest_api_sad', esc_html__( 'No podcast feeds have been defined. Please create one and try again.', 'hpm-podcasts' ), [ 'status' => 500 ] );
 		endif;
 		set_transient( 'hpm_podcasts_list', $list, 3600 );
 		return rest_ensure_response( [ 'code' => 'rest_api_success', 'message' => esc_html__( 'Podcast feed list', 'hpm-podcasts' ), 'data' => [ 'list' => $list, 'status' => 200 ] ] );
+	}
 
-		// return new WP_Error( 'rest_api_sad', esc_html__( 'No podcast feeds have been defined. Please create one and try again.', 'hpm-podcasts' ), [ 'status' => 500 ] );
+	/**
+	 * JSON version of requested podcast feed
+	 *
+	 * @param WP_REST_Request $request This function accepts a rest request to process data.
+	 *
+	 * @return mixed
+	 */
+	public function json_feed( WP_REST_Request $request ) {
+		if ( empty( $request['feed'] ) ) :
+			return new WP_Error( 'rest_api_sad', esc_html__( 'No podcast feed specified. Please choose a podcast feed.', 'hpm-podcasts' ), [ 'status' => 500 ] );
+		endif;
+
+		$output = get_option( 'hpm_podcast-json-'.$request['feed'] );
+		if ( !$output ) :
+			return new WP_Error( 'rest_api_sad', esc_html__( 'No podcast feed specified. Please choose a podcast feed.', 'hpm-podcasts' ), [ 'status' => 500 ] );
+		endif;
+
+		$oj = json_decode( $output, true );
+
+		return rest_ensure_response( [ 'code' => 'rest_api_success', 'message' => esc_html__( 'JSON-formatted feed for ' . $oj['title'], 'hpm-podcasts' ), 'data' => [ 'feed' => $oj, 'status' => 200 ] ] );
 	}
 }
 
