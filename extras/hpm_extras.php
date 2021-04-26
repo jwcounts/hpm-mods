@@ -564,14 +564,25 @@ function custom_register_coauthors() {
 
 function custom_get_coauthors( $object, $field_name, $request ) {
 	$coauthors = get_coauthors($object['id']);
-
 	$authors = [];
-	foreach ( $coauthors as $author ) {
+	foreach ( $coauthors as $coa ) :
+		$guest = true;
+		if ( is_a( $coa, 'wp_user' ) ) :
+			$guest = false;
+		elseif ( !empty( $coa->type ) && $coa->type == 'guest-author' ) :
+			if ( !empty( $coa->linked_account ) ) :
+				$authid = get_user_by( 'login', $coa->linked_account );
+				if ( is_a( $authid, 'wp_user' ) ) :
+					$guest = false;
+				endif;
+			endif;
+		endif;
 		$authors[] = [
-			'display_name' => $author->display_name,
-			'user_nicename' => $author->user_nicename
+			'display_name' => $coa->display_name,
+			'user_nicename' => $coa->user_nicename,
+			'guest_author' => $guest
 		];
-	};
+	endforeach;
 	return $authors;
 }
 
