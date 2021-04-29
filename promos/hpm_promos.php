@@ -389,6 +389,9 @@ class HPM_Promos {
 		line-height: 1.16666666;
 		text-align: center;
 	}
+	#hpm_promo_end_year {
+		width: 3.5em;
+	}
 	.wp-core-ui select#hpm_promo_end_mon {
 		font-size: 12px;
 		line-height: 2.25;
