@@ -608,16 +608,27 @@ class HPM_Promos {
 		var wide = window.innerWidth;
 		".$output."
 		var topBanner = document.querySelectorAll('.top-banner');
-		for (i = 0; i < topBanner.length; ++i) {
-			topBanner[i].addEventListener('click', function() {
-				var attr = this.id;
+		Array.from(topBanner).forEach((item) => {
+			item.addEventListener('click', () => {
+				var attr = item.id;
 				if ( typeof attr !== typeof undefined && attr !== false) {
 					ga('hpmprod.send', 'event', 'Top Banner', 'click', attr);
 					ga('hpmRollupprod.send', 'event', 'Top Banner', 'click', attr);
 					ga('hpmWebAmpprod.send', 'event', 'Top Banner', 'click', attr);
 				}
 			});
-		}
+		});
+		var lBox = document.querySelectorAll('#campaign-splash a');
+		Array.from(lBox).forEach((item) => {
+			item.addEventListener('click', () => {
+				var campaign = document.querySelector('#campaign-splash').getAttribute('data-campaign');
+				if ( typeof campaign !== typeof undefined && campaign !== false) {
+					ga('hpmprod.send', 'event', 'Lightbox', 'click', campaign);
+					ga('hpmRollupprod.send', 'event', 'Lightbox', 'click', campaign);
+					ga('hpmWebAmpprod.send', 'event', 'Lightbox', 'click', campaign);
+				}
+			});
+		});
 	}());
 	jQuery(document).ready(function($){
 		$('#emergency').slideDown();
