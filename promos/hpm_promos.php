@@ -514,7 +514,7 @@ class HPM_Promos {
 					endif;
 					$content_esc = str_replace( "[[image]]", "'+image+'", $content_esc  );
 					if ( $wp_global->is_home || ( !empty( $page_id ) && get_page_template_slug( $page_id ) == 'page-main-categories.php' ) ) :
-						$output .= "if ( document.getElementById('top-schedule-wrap') !== null ) { document.getElementById('top-schedule-wrap').insertAdjacentHTML('afterbegin', '<div class=\"hpm-promo-mobile-hide\">".$content_esc."</div>'); masonLoad(); }";
+						$output .= "if ( document.getElementById('top-schedule-wrap') !== null ) { document.getElementById('top-schedule-wrap').insertAdjacentHTML('afterbegin', '<div class=\"hpm-promo-mobile-hide\">".$content_esc."</div>'); }";
 					else :
 						$output .= "if ( document.querySelector( 'aside.column-right' ) !== null ) {document.querySelector('aside.column-right').insertAdjacentHTML('afterbegin', '<div class=\"hpm-promo-mobile-hide\">".$content_esc."</div>'); }";
 					endif;

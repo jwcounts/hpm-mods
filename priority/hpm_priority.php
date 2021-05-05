@@ -54,7 +54,7 @@ function hpm_priority_settings_page() {
 			$recents[ $recent_id ] = get_the_title();
 		endwhile;
 	endif;
-	
+
 	$indepth = new WP_Query([
 		'post_status' => 'publish',
 		'posts_per_page' => 50,

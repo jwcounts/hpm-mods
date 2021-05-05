@@ -850,7 +850,7 @@ function hpm_image_preview_page() {
 							<h2 style="width: 100%;">The article you're previewing doesn't have a featured image. Set one in the editor and refresh this page.</h2>
 <?php
 		elseif ( is_user_logged_in() && current_user_can( 'edit_post', $post_id ) ) : ?>
-							<article class="<?php echo implode( ' ', $postClass ); ?> felix-type-a grid-item grid-item--width2">
+							<article class="<?php echo implode( ' ', $postClass ); ?> felix-type-a">
 								<div class="thumbnail-wrap" style="background-image: url(<?php echo $img['large']; ?>)">
 									<a class="post-thumbnail" href="#" aria-hidden="true"></a>
 								</div>
@@ -859,7 +859,7 @@ function hpm_image_preview_page() {
 									<h2 class="entry-title"><a href="#" rel="bookmark"><?php echo $title; ?></a></h2>
 								</header>
 							</article>
-							<article class="<?php echo implode( ' ', $postClass ); ?> felix-type-b grid-item grid-item--width2">
+							<article class="<?php echo implode( ' ', $postClass ); ?> felix-type-b">
 								<div class="thumbnail-wrap" style="background-image: url(<?php echo $img['thumb']; ?>)">
 									<a class="post-thumbnail" href="#" aria-hidden="true"></a>
 								</div>
@@ -868,7 +868,7 @@ function hpm_image_preview_page() {
 									<h2 class="entry-title"><a href="#" rel="bookmark"><?php echo $title; ?></a></h2>
 								</header>
 							</article>
-							<article class="<?php echo implode( ' ', $postClass ); ?> felix-type-d grid-item grid-item--width2">
+							<article class="<?php echo implode( ' ', $postClass ); ?> felix-type-d">
 								<div class="thumbnail-wrap" style="background-image: url(<?php echo $img['thumb']; ?>)">
 									<a class="post-thumbnail" href="#" aria-hidden="true"></a>
 								</div>
