@@ -464,19 +464,23 @@ function hpm_nprapi_output() {
 /**
  * Hide the Comments menu in Admin because we don't use it
  */
-function remove_menus(){
+function remove_menus() {
 	remove_menu_page( 'edit-comments.php' );
 }
 add_action( 'admin_menu', 'remove_menus' );
 
 function hpm_election_night() {
+	$output = '';
 	$args = [
 		'p' => 248126,
 		'post_type'  => 'page',
 		'post_status' => 'publish'
 	];
 	$election = new WP_Query( $args );
-	return $election->post->post_content;
+	if ( !empty( $election->post->post_content ) ) :
+		$output = $election->post->post_content;
+	endif;
+	return $output;
 }
 add_shortcode( 'election_night', 'hpm_election_night' );
 

@@ -1167,6 +1167,44 @@ class HPM_Podcasts {
 		return $output;
 	}
 
+	public static function show_banner( $id ) {
+		$options = get_post_meta( $id, 'hpm_show_meta', true );
+		$page_head_style = $page_head_class = '';
+		$count = 0;
+		foreach ( $options['banners'] as $op ) :
+			if ( !empty( $op ) ) :
+				$count++;
+			endif;
+		endforeach;
+		if ( $count > 1 ) :
+			echo '<div class="page-banner"></div>';
+			$page_head_class = ' screen-reader-text';
+			foreach ( $options['banners'] as $bk => $bv ) :
+				if ( !empty( $bv ) ) :
+					if ( $bk == 'mobile' ) :
+						$page_head_style .= ".page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/1.5); }";
+					elseif ( $bk == 'tablet' ) :
+						$page_head_style .= " @media screen and (min-width: 34em) { .page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/4); } }";
+					elseif ( $bk == 'desktop' ) :
+						$page_head_style .= " @media screen and (min-width: 52.5em) { .page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/6); } }";
+					endif;
+				endif;
+			endforeach;
+		elseif ( $count == 1 ) :
+			echo '<div class="page-banner"></div>';
+			$page_head_class = ' screen-reader-text';
+			foreach ( $options['banners'] as $bk => $bv ) :
+				if ( !empty( $bv ) ) :
+					$page_head_style .= ".page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/6); }";
+				endif;
+			endforeach;
+		endif;
+		if ( !empty( $page_head_style ) ) :
+			echo "<style>".$page_head_style."</style>";
+		endif;
+		return $page_head_class;
+	}
+
 	public function remove_foot_filter( $content )
 	{
 		if ( has_filter( 'the_content', [ $this, 'article_footer' ] ) ) :
