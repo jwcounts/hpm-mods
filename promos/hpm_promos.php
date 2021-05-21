@@ -588,7 +588,7 @@ class HPM_Promos {
 					endif;
 				elseif ( $meta['type'] == 'emergency' ) :
 					$content_esc = str_replace( [ '<p>', '</p>' ], [ '', '' ], $content_esc );
-					$output .= "document.getElementById('fb-root').insertAdjacentHTML('afterend', '<div id=\"emergency\"><span class=\"fas fa-exclamation-circle\" aria-hidden=\"true\"></span> ".$content_esc."</div>');";
+					$output .= "document.body.insertAdjacentHTML('afterbegin', '<div id=\"emergency\"><span class=\"fas fa-exclamation-circle\" aria-hidden=\"true\"></span> ".$content_esc."</div>');";
 				elseif ( $meta['type'] == 'dont-miss' ) :
 					$dont[] = str_replace( [ '<p>', '</p>' ], [ '', '' ], $content_esc );
 				endif;
@@ -629,14 +629,21 @@ class HPM_Promos {
 				}
 			});
 		});
+		if ( document.querySelector('#emergency') !== null ) {
+			setTimeout(() => {
+				document.querySelector('#emergency').classList.add('displayed');
+			}, 500);
+		}
 	}());
-	jQuery(document).ready(function($){
-		$('#emergency').slideDown();
-	});
 </script>
 <style>
 	#emergency {
-		display: none;
+		transition-property: all;
+		transition-duration: .5s;
+		transform: translateY(-100%);
+	}
+	#emergency.displayed {
+		transform: translateY(0);
 	}
 	.hpm-promo-mobile-hide {
 		display: none;

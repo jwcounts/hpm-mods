@@ -258,11 +258,13 @@ function hpm_head_banners( $id ) {
 	$options = get_post_meta( $id, 'hpm_page_options', true );
 	$page_head_style = $page_head_class = '';
 	$count = 0;
-	foreach ( $options['banner'] as $op ) :
-		if ( !empty( $op ) ) :
-			$count++;
-		endif;
-	endforeach;
+	if ( !empty( $options ) ) :
+		foreach ( $options['banner'] as $op ) :
+			if ( !empty( $op ) ) :
+				$count++;
+			endif;
+		endforeach;
+	endif;
 	if ( $count > 1 ) :
 		echo '<div class="page-banner"></div>';
 		$page_head_class = ' screen-reader-text';

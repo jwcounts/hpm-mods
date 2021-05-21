@@ -30,31 +30,23 @@
 				</xsl:element>
 				<xsl:element name="link">
 					<xsl:attribute name="rel">shortcut icon</xsl:attribute>
-					<xsl:attribute name="href">https://cdn.hpm.io/assets/images/favicon.ico</xsl:attribute>
-				</xsl:element>
-				<xsl:element name="link">
-					<xsl:attribute name="rel">shortcut icon</xsl:attribute>
-					<xsl:attribute name="href">https://cdn.hpm.io/assets/images/favicon.ico</xsl:attribute>
+					<xsl:attribute name="href">https://cdn.hpm.io/assets/images/favicon/icon-48.png</xsl:attribute>
 				</xsl:element>
 				<xsl:element name="link">
 					<xsl:attribute name="rel">icon</xsl:attribute>
-					<xsl:attribute name="href">https://cdn.hpm.io/assets/images/favicon-192x192.png</xsl:attribute>
+					<xsl:attribute name="href">https://cdn.hpm.io/assets/images/favicon/icon-192.png</xsl:attribute>
 					<xsl:attribute name="type">image/png</xsl:attribute>
 					<xsl:attribute name="sizes">192x192</xsl:attribute>
 				</xsl:element>
 				<xsl:element name="link">
 					<xsl:attribute name="rel">apple-touch-icon</xsl:attribute>
-					<xsl:attribute name="href">https://cdn.hpm.io/assets/images/apple-touch-icon-180x180.png</xsl:attribute>
+					<xsl:attribute name="href">https://cdn.hpm.io/assets/images/favicon/apple-touch-icon-180.png</xsl:attribute>
 					<xsl:attribute name="type">image/png</xsl:attribute>
 					<xsl:attribute name="sizes">180x180</xsl:attribute>
 				</xsl:element>
 				<xsl:element name="script">
 					<xsl:attribute name="type">text/javascript</xsl:attribute>
-					<xsl:attribute name="src">https://assets.hpm.io/wp/wp-includes/js/jquery/jquery.js</xsl:attribute>
-				</xsl:element>
-				<xsl:element name="script">
-					<xsl:attribute name="type">text/javascript</xsl:attribute>
-					<xsl:attribute name="src">https://cdn.hpm.io/assets/js/rss.js</xsl:attribute>
+					<xsl:attribute name="src">https://cdn.hpm.io/assets/js/analytics/index.js</xsl:attribute>
 				</xsl:element>
 				<xsl:element name="script">
 					<xsl:attribute name="type">text/javascript</xsl:attribute>
@@ -62,7 +54,11 @@
 				</xsl:element>
 				<xsl:element name="script">
 					<xsl:attribute name="type">text/javascript</xsl:attribute>
-					<xsl:attribute name="src">https://cdn.hpm.io/assets/js/main.js?ver=20181129</xsl:attribute>
+					<xsl:attribute name="src">https://cdn.hpm.io/assets/js/main.js</xsl:attribute>
+				</xsl:element>
+				<xsl:element name="script">
+					<xsl:attribute name="type">text/javascript</xsl:attribute>
+					<xsl:attribute name="src">https://cdn.hpm.io/assets/js/plyr/plyr.js</xsl:attribute>
 				</xsl:element>
 				<style type="text/css">.pod-desc { font: 500 1.125em/1.125em var(--hpm-font-main); color: rgb(142,144,144); }</style>
 			</head>
@@ -78,32 +74,17 @@
 							<a href="/" rel="home" title="Houston Public Media"></a>
 						</div>
 						<div id="top-schedule">
-							<div class="top-schedule-label">Schedules</div>
-							<div class="top-schedule-links"><a href="/tv8">TV 8 Guide</a></div>
-							<div class="top-schedule-links"><a href="/news887">News 88.7</a></div>
-							<div class="top-schedule-links"><a href="/classical">Classical</a></div>
-							<div class="top-schedule-links"><a href="/mixtape">Mixtape</a></div>
-						</div>
-						<div id="top-listen"><a href="/listen-live" target="_blank" data-dialog="860:455">Listen Live</a></div>
-						<div id="top-donate"><a href="/donate" target="_blank">Donate</a></div>
-						<div id="header-social">
-							<div class="header-social-icon header-facebook">
-								<a href="https://www.facebook.com/houstonpublicmedia" target="_blank"><span class="fab fa-facebook-f"
-										aria-hidden="true"></span></a>
-							</div>
-							<div class="header-social-icon header-twitter">
-								<a href="https://twitter.com/houstonpubmedia" target="_blank"><span class="fab fa-twitter"
-										aria-hidden="true"></span></a>
-							</div>
-							<div class="header-social-icon header-instagram">
-								<a href="https://instagram.com/houstonpubmedia" target="_blank"><span class="fab fa-instagram"
-										aria-hidden="true"></span></a>
-							</div>
-							<div class="header-social-icon header-youtube">
-								<a href="https://www.youtube.com/user/houstonpublicmedia" target="_blank"><span class="fab fa-youtube"
-										aria-hidden="true"></span></a>
+							<div class="top-schedule-label"><button data-href="#top-schedule-wrap"><span class="fas fa-calendar" aria-hidden="true"></span>Schedules</button></div>
+							<div class="top-schedule-link-wrap">
+								<div class="top-schedule-links"><a href="/tv8">TV 8 Guide</a></div>
+								<div class="top-schedule-links"><a href="/news887">News 88.7</a></div>
+								<div class="top-schedule-links"><a href="/classical">Classical</a></div>
+								<div class="top-schedule-links"><a href="/mixtape">Mixtape</a></div>
 							</div>
 						</div>
+						<div id="top-listen"><button data-href="/listen-live" data-dialog="480:855"><span class="fas fa-microphone" aria-hidden="true"></span>Listen</button></div>
+						<div id="top-watch"><button data-href="/watch-live" data-dialog="820:850"><span class="fas fa-tv" aria-hidden="true"></span>Watch</button></div>
+						<div id="top-donate"><a href="/donate"><span class="fas fa-heart" aria-hidden="true"></span><br /><span class="top-mobile-text">Donate</span></a></div>
 						<div id="top-mobile-menu" style=""><span class="fas fa-bars" aria-hidden="true"></span></div>
 						<nav id="site-navigation" class="main-navigation" role="navigation">
 							<div class="menu-main-header-nav-container">
@@ -178,7 +159,7 @@
 							</article>
 							<aside class="column-right">
 								<h2>About <xsl:value-of select="$title" /></h2>
-								<div class="pod-desc"><xsl:value-of select="description" disable-output-escaping="yes" /></div>
+								<div class="pod-desc"><xsl:value-of select="description" disable-output-escaping="no" /></div>
 							</aside>
 							<section id="search-results">
 								<xsl:apply-templates select="item" />
@@ -188,47 +169,84 @@
 				</div>
 			</div>
 			<footer id="colophon" class="site-footer" role="contentinfo">
-				<div class="site-info">
-					<div class="foot-logo">
-						<a href="https://www.houstonpublicmedia.org/" rel="home" title="Houston Public Media"><img src="https://cdn.hpm.io/assets/images/HPM_OneLine_UH.png" alt="Houston Public Media" /></a>
-					</div>
-					<div id="footer-social">
-						<div class="footer-social-icon footer-facebook">
-							<a href="https://www.facebook.com/houstonpublicmedia" target="_blank"><span class="fab fa-facebook-f" aria-hidden="true"></span></a>
-						</div>
-						<div class="footer-social-icon footer-twitter">
-							<a href="https://twitter.com/houstonpubmedia" target="_blank"><span class="fab fa-twitter" aria-hidden="true"></span></a>
-						</div>
-						<div class="footer-social-icon footer-instagram">
-							<a href="https://instagram.com/houstonpubmedia" target="_blank"><span class="fab fa-instagram" aria-hidden="true"></span></a>
-						</div>
-						<div class="footer-social-icon footer-youtube">
-							<a href="https://www.youtube.com/user/houstonpublicmedia" target="_blank"><span class="fab fa-youtube" aria-hidden="true"></span></a>
+				<section>
+					<div class="site-info">
+						<div class="foot-logo">
+							<a href="https://www.houstonpublicmedia.org/" rel="home" title="Houston Public Media">
+								<img src="https://cdn.hpm.io/assets/images/HPM-PBS-NPR-White.png" alt="Houston Public Media" />
+							</a>
 						</div>
 					</div>
-					<nav id="secondary-navigation" class="footer-navigation" role="navigation">
-						<div class="menu-footer-navigation-container">
-							<ul id="menu-footer-navigation" class="nav-menu">
-								<li><a href="https://www.houstonpublicmedia.org/news/">News</a></li>
-								<li><a href="https://www.houstonpublicmedia.org/arts-culture/">Arts &#038; Culture</a></li>
-								<li><a href="https://www.houstonpublicmedia.org/education/">Education</a></li>
-								<li><a href="https://www.houstonpublicmedia.org/tv8/">TV 8</a></li>
-								<li><a href="https://www.houstonpublicmedia.org/news887/">News 88.7</a></li>
-								<li><a href="https://www.houstonpublicmedia.org/classical/">Classical</a></li>
-								<li><a href="https://www.houstonpublicmedia.org/about/">About</a></li>
-								<li><a href="https://www.houstonpublicmedia.org/contact-us/">Contact Us</a></li>
-								<li class="flex-break-before"><a href="https://www.houstonpublicmedia.org/about/fcc-station-information/">FCC Station Information</a></li>
-								<li><a href="https://publicfiles.fcc.gov/fm-profile/kuhf">KUHF Public File</a></li>
-								<li><a href="https://publicfiles.fcc.gov/tv-profile/kuht">KUHT Public File</a></li>
-							</ul>
+					<div class="foot-nav">
+						<div class="foot-hpm">
+							<h3>Houston Public Media</h3>
+							<nav id="second-navigation" class="footer-navigation" role="navigation">
+								<div class="menu-footer-navigation-container">
+									<ul id="menu-footer-navigation" class="nav-menu">
+										<li><a href="https://www.houstonpublicmedia.org/about/">About</a></li>
+										<li><a href="https://www.houstonpublicmedia.org/about/careers/">Careers</a></li>
+										<li><a href="https://www.uh.edu/president/communications/communicae/20200608-commitment-to-the-city/index.php">Commitment</a></li>
+										<li><a href="https://www.houstonpublicmedia.org/tv8/">TV</a></li>
+										<li><a href="https://www.houstonpublicmedia.org/news887/">Radio</a></li>
+										<li><a href="https://www.houstonpublicmedia.org/news/">News</a></li>
+										<li><a href="https://www.houstonpublicmedia.org/shows/">Shows</a></li>
+									</ul>
+								</div>
+								<div class="clear"></div>
+							</nav>
 						</div>
-						<div class="clear"></div>
-					</nav>
-					<p>Houston Public Media is supported with your gifts to the Houston Public Media Foundation and is licensed to the <a href="https://www.uh.edu" target="_blank" style="color: #cc0000;">University of Houston</a></p>
-					<p><xsl:value-of select="copyright" /> | <a href="http://www.uhsystem.edu/privacy-notice/">Privacy
-							Policy</a></p>
+						<div class="foot-comply">
+							<h3>Compliance</h3>
+							<nav id="third-navigation" class="footer-navigation" role="navigation">
+								<div class="menu-footer-compliance-container">
+									<ul id="menu-footer-compliance" class="nav-menu">
+										<li><a href="https://www.houstonpublicmedia.org/about/corporation-for-public-broadcasting-cpb-compliance/">CPB Compliance</a></li>
+										<li><a href="https://www.houstonpublicmedia.org/about/fcc-station-information/">FCC Station Information</a></li>
+										<li><a href="https://publicfiles.fcc.gov/fm-profile/kuhf">KUHF Public File</a></li>
+										<li><a href="https://publicfiles.fcc.gov/tv-profile/kuht">KUHT Public File</a></li>
+										<li><a href="http://www.uhsystem.edu/privacy-notice/">Privacy Policy</a></li>
+										<li><a href="https://www.houstonpublicmedia.org/about/additional-disclosures/">Additional Disclosures</a></li>
+									</ul>
+								</div>
+								<div class="clear"></div>
+							</nav>
+						</div>
+					</div>
+					<div class="foot-newsletter">
+						<h3>Subscribe to Our Newsletters</h3>
+						<h4><a href="https://www.houstonpublicmedia.org/support/newslettereguide-signup/">Today in Houston</a></h4>
+						<p>Let the Houston Public Media newsroom help you start your day.</p>
+						<h4><a href="https://www.houstonpublicmedia.org/support/newslettereguide-signup/">This Week</a></h4>
+						<p>Get highlights, trending news, and behind-the-scenes insights from Houston Public Media delivered to your inbox each week.</p>
+					</div>
+					<div class="foot-contact">
+						<p class="foot-button"><a href="/contact-us/">Contact Us</a></p>
+						<p>4343 Elgin, Houston, TX 77204-0008</p>
+						<div id="footer-social">
+							<div class="footer-social-icon footer-facebook">
+								<a href="https://www.facebook.com/houstonpublicmedia" target="_blank"><span class="fab fa-facebook-f" aria-hidden="true"></span></a>
+							</div>
+							<div class="footer-social-icon footer-twitter">
+								<a href="https://twitter.com/houstonpubmedia" target="_blank"><span class="fab fa-twitter" aria-hidden="true"></span></a>
+							</div>
+							<div class="footer-social-icon footer-instagram">
+								<a href="https://instagram.com/houstonpubmedia" target="_blank"><span class="fab fa-instagram" aria-hidden="true"></span></a>
+							</div>
+							<div class="footer-social-icon footer-youtube">
+								<a href="https://www.youtube.com/user/houstonpublicmedia" target="_blank"><span class="fab fa-youtube" aria-hidden="true"></span></a>
+							</div>
+							<div class="footer-social-icon footer-linkedin">
+								<a href="https://linkedin.com/company/houstonpublicmedia" target="_blank"><span class="fab fa-linkedin-in" aria-hidden="true"></span></a>
+							</div>
+						</div>
+					</div>
+				</section>
+				<div class="foot-tag">
+					<p>Houston Public Media is supported with your gifts to the Houston Public Media Foundation and is licensed to the <a href="https://www.uh.edu" target="_blank">University of Houston</a></p>
+					<p>Copyright © 2021</p>
 				</div>
 			</footer>
+			<script type="text/javascript">hpm.audioPlayers();var pods = document.querySelectorAll('.pod-desc');if (pods !== null) { Array.from(pods).forEach((p) => {p.innerHTML = p.innerText; }); }</script>
 		</body>
 	</xsl:template>
 	<xsl:template match="item" xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -268,7 +286,12 @@
 						</xsl:if>
 					</span></p>
 					<xsl:if test="count(child::enclosure)=1">
-						<p><audio controls="controls" src="{enclosure/@url}">Your browser does not support the <code>audio</code> element. <a href="{enclosure/@url}">Click here to play.</a></audio></p>
+						<div class="article-player-wrap">
+							<audio controls="controls" class="js-player">
+								<source src="{enclosure/@url}?source=podcast-feed-page" type="audio/mpeg" />
+								Your browser does not support the <code>audio</code> element. <a href="{enclosure/@url}">Click here to play.</a>
+							</audio>
+						</div>
 					</xsl:if>
 					<div class="pod-desc"><xsl:call-template name="outputContent" /></div>
 				</div>
