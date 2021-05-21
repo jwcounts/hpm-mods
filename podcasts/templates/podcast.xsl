@@ -54,11 +54,11 @@
 				</xsl:element>
 				<xsl:element name="script">
 					<xsl:attribute name="type">text/javascript</xsl:attribute>
-					<xsl:attribute name="src">https://cdn.hpm.io/assets/js/main.js</xsl:attribute>
+					<xsl:attribute name="src">https://cdn.hpm.io/assets/js/main.js?v=1</xsl:attribute>
 				</xsl:element>
 				<xsl:element name="script">
 					<xsl:attribute name="type">text/javascript</xsl:attribute>
-					<xsl:attribute name="src">https://cdn.hpm.io/assets/js/plyr/plyr.js</xsl:attribute>
+					<xsl:attribute name="src">https://cdn.hpm.io/assets/js/plyr/plyr.js?v=1</xsl:attribute>
 				</xsl:element>
 				<style type="text/css">.pod-desc { font: 500 1.125em/1.125em var(--hpm-font-main); color: rgb(142,144,144); }</style>
 			</head>
