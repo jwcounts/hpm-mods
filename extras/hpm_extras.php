@@ -1172,3 +1172,66 @@ function postscript_class_post( $classes ) {
     return $classes;
 }
 add_filter( 'post_class', 'postscript_class_post' );
+
+
+add_action( 'load-post.php', 'hpm_alt_headline_setup' );
+add_action( 'load-post-new.php', 'hpm_alt_headline_setup' );
+function hpm_alt_headline_setup() {
+	add_action( 'add_meta_boxes', 'hpm_alt_headline_add_meta' );
+	add_action( 'save_post', 'hpm_alt_headline_save_meta', 10, 2 );
+}
+
+function hpm_alt_headline_add_meta() {
+	add_meta_box(
+		'hpm-alt-headline-meta-class',
+		esc_html__( 'Alternate Headline for Homepage', 'example' ),
+		'hpm_alt_headline_meta_box',
+		'post',
+		'normal',
+		'high'
+	);
+}
+
+function hpm_alt_headline_meta_box( $object, $box ) {
+	$placeholder = [
+		'Diana was still alive hours before she died',
+		'Missing woman unwittingly joins search party looking for herself',
+		'Meatball sandwich horseplay leads to two deaths, family betrayal, two trials',
+		'Patrick Stewart surprises fan with a life threatening illness',
+		'Homicide victims rarely talk to police',
+		'"We hate math," say 4 in 10 - a majority of Americans',
+		'Breathing oxygen linked to staying alive',
+		'China may be using sea to hide its submarines',
+		'Federal agents raid gun shop, find weapons',
+		'Missippli\'s literacy program shows improvement',
+		'Northfield plans to plan strategic plan',
+		'State population to double by 2040; babies to blame',
+		'Survey finds fewer deer after hunt',
+		'Barbershop singers bring joy to school for deaf',
+		'Woman missing since she got lost',
+		'Miracle cure kills fifth patient'
+	];
+	$rand = rand( 0, count( $placeholder ) );
+	wp_nonce_field( basename( __FILE__ ), 'hpm_alt_headline_class_nonce' );
+	$alt_headline = get_post_meta( $object->ID, 'hpm_alt_headline', true ); ?>
+	<p>If you would like to provide an alternate headline for use on the homepage, please enter it here.</p>
+	<label for="hpm-alt-headline"><strong><?php _e( "Headline:", 'hpm-podcasts' ); ?></strong></label><br /><textarea id="hpm-alt-headline" name="hpm-alt-headline" placeholder="<?php echo $placeholder[$rand]; ?>" style="width: 100%;" rows="2"><?PHP echo $alt_headline; ?></textarea>
+<?php
+}
+
+function hpm_alt_headline_save_meta( $post_id, $post ) {
+	if ( $post->post_type == 'post' ) :
+		if ( !isset( $_POST['hpm_alt_headline_class_nonce'] ) || !wp_verify_nonce( $_POST['hpm_alt_headline_class_nonce'], basename( __FILE__ ) ) ) :
+			return $post_id;
+		endif;
+
+		$post_type = get_post_type_object( $post->post_type );
+
+		if ( !current_user_can( $post_type->cap->edit_post, $post_id ) ) :
+			return $post_id;
+		endif;
+		if ( !empty( $_POST['hpm-alt-headline'] ) ) :
+			update_post_meta( $post_id, 'hpm_alt_headline', $_POST['hpm-alt-headline'] );
+		endif;
+	endif;
+}
