@@ -1230,8 +1230,11 @@ function hpm_alt_headline_save_meta( $post_id, $post ) {
 		if ( !current_user_can( $post_type->cap->edit_post, $post_id ) ) :
 			return $post_id;
 		endif;
+		$alt = get_post_meta( $post_id, 'hpm_alt_headline', true );
 		if ( !empty( $_POST['hpm-alt-headline'] ) ) :
-			update_post_meta( $post_id, 'hpm_alt_headline', $_POST['hpm-alt-headline'] );
+			update_post_meta( $post_id, 'hpm_alt_headline', sanitize_text_field( $_POST['hpm-alt-headline'] ) );
+		elseif ( empty( $_POST['hpm-alt-headline'] ) && !empty( $alt ) ) :
+			delete_post_meta( $post_id, 'hpm_alt_headline', '' );
 		endif;
 	endif;
 }
