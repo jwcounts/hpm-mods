@@ -294,8 +294,15 @@ function staff_meta_query( $query ) {
 		$query->set( 'orderby', 'meta_value' );
 		$query->set( 'order', 'ASC' );
 		if ( !is_admin() ) :
-			$query->query['posts_per_page'] = 30;
 			$query->set( 'posts_per_page', 30 );
+		endif;
+		if ( !is_admin() && empty( $query->get( 'staff_category' ) ) ) :
+			$query->set( 'tax_query', [[
+				'taxonomy' => 'staff_category',
+				'field' => 'slug',
+				'terms' => [ 'department-leaders', 'executive-team' ],
+				'operator' => 'NOT IN'
+			]] );
 		endif;
 	endif;
 }
@@ -339,3 +346,116 @@ function hpm_staff_tax_template( $taxonomy_template ) {
 	return $taxonomy_template;
 }
 add_filter( 'taxonomy_template', 'hpm_staff_tax_template' );
+
+function hpm_staff_out() {
+	global $wp_query;
+	$staff = get_post_meta( get_the_ID(), 'hpm_staff_meta', true );
+	$author_bio = get_the_content();
+	if ( $author_bio == "<p>Biography pending.</p>" || $author_bio == "<p>Biography pending</p>" || $author_bio == '' ) :
+		$bio_link = false;
+	else :
+		$bio_link = true;
+	endif; ?>
+	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+<?php	if ( has_post_thumbnail() ) : ?>
+			<div class="staff-thumb">
+		<?php echo ( $bio_link ? '<a href="' . get_the_permalink() . '" aria-hidden="true">' : ''); ?>
+				<img src="<?php the_post_thumbnail_url( 'medium' ); ?>" alt="<?php echo get_the_title() . ': ' . $staff['title'] ?>" />
+		<?php echo ( $bio_link ? '</a>' : '' ); ?>
+			</div>
+<?php
+		endif; ?>
+		<div class="staff-wrap">
+			<header class="entry-header">
+				<h2 class="entry-title"><?php echo ( $bio_link ? '<a href="' . get_the_permalink() . '" rel="bookmark">' . get_the_title() . '</a>' : get_the_title() ); ?></h2>
+		<?php
+		if ( !empty( $staff['email'] ) ) : ?>
+				<div class="social-icon">
+					<a href="mailto:<?php echo $staff['email']; ?>" target="_blank"><span class="fas fa-envelope" aria-hidden="true"></span></a>
+				</div>
+<?php	endif;
+		if ( !empty( $staff['twitter'] ) ) : ?>
+				<div class="social-icon">
+					<a href="<?php echo $staff['twitter']; ?>" target="_blank"><span class="fab fa-twitter" aria-hidden="true"></span></a>
+				</div>
+<?php	endif;
+		if (!empty( $staff['facebook'] ) ) : ?>
+				<div class="social-icon">
+					<a href="<?php echo $staff['facebook']; ?>" target="_blank"><span class="fab fa-facebook-f" aria-hidden="true"></span></a>
+				</div>
+<?php	endif;
+		if (!empty( $staff['linkedin'] ) ) : ?>
+				<div class="social-icon">
+					<a href="<?php echo $staff['linkedin']; ?>" target="_blank"><span class="fab fa-linkedin-in" aria-hidden="true"></span></a>
+				</div>
+<?php	endif; ?>
+			</header>
+			<div class="entry-summary">
+				<p><?php echo $staff['title']; ?></p>
+			</div>
+		</div>
+	</article>
+<?php
+}
+
+function hpm_staff_echo( $query ) {
+	$main_query = $query;
+	$cat = $main_query->get( 'staff_category' );
+	$exempt = [ 'hosts', 'executive-team', 'department-leaders' ];
+	if ( empty( $main_query->query['paged'] ) && empty( $cat ) ) :
+		echo '<h2>Executive Team</h2>';
+		$args = [
+			'post_type' => 'staff',
+			'post_status' => 'publish',
+			'posts_per_page' => -1,
+			'ignore_sticky_posts' => 1,
+			'tax_query' => [[
+				'taxonomy' => 'staff_category',
+				'field' => 'slug',
+				'terms' => [ 'executive-team' ]
+			]],
+			'meta_query' => [ 'hpm_staff_alpha' => [ 'key' => 'hpm_staff_alpha' ] ],
+			'orderby' => 'meta_value',
+			'order' => 'ASC'
+		];
+		$el = new WP_Query( $args );
+		while ( $el->have_posts() ) : $el->the_post();
+			hpm_staff_out();
+		endwhile;
+		echo '<h2 class="top-pad">Department Leaders</h2>';
+
+		$args['tax_query'][0]['terms'] = [ 'department-leaders' ];
+		$dh = new WP_Query($args);
+		while ( $dh->have_posts() ) : $dh->the_post();
+			hpm_staff_out();
+		endwhile;
+		echo '<h2 class="top-pad">HPM Staff</h2>';
+	elseif ( !empty( $cat ) && !in_array( $cat, $exempt ) ) :
+		$main_query->posts = hpm_staff_sort( $main_query->posts );
+	endif;
+	while ( $main_query->have_posts() ) :
+		$main_query->the_post();
+		hpm_staff_out();
+	endwhile;
+	wp_reset_query();
+}
+
+function hpm_staff_sort( $posts ) {
+	$out = $first = [];
+	$exempt = [ 'hosts', 'executive-team', 'department-leaders' ];
+	foreach ( $posts as $p ) :
+		$lead = false;
+		$cat = get_terms( [ 'taxonomy' => 'staff_category', 'object_ids' => $p->ID ] );
+		foreach ( $cat as $c ) :
+			if ( in_array( $c->slug, $exempt ) ) :
+				$lead = true;
+			endif;
+		endforeach;
+		if ( $lead ) :
+			$first[] = $p;
+		else :
+			$out[] = $p;
+		endif;
+	endforeach;
+	return array_merge( $first, $out );
+}

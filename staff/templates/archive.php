@@ -23,64 +23,10 @@ get_header(); ?>
 						'hide_empty'		=> true,
 						'value_field'		=> 'slug'
 					]); ?>
-			</header><!-- .page-header -->
+			</header>
 			<section id="search-results">
-			<?php
-			while ( have_posts() ) : the_post();
-				$staff = get_post_meta( get_the_ID(), 'hpm_staff_meta', true );
-				$author_bio = get_the_content();
-				if ( $author_bio == "<p>Biography pending.</p>" || $author_bio == "<p>Biography pending</p>" || $author_bio == '' ) :
-					$bio_link = false;
-				else :
-					$bio_link = true;
-				endif; ?>
-				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-<?php
-					if ( has_post_thumbnail() ) : ?>
-						<div class="staff-thumb">
-					<?php echo ( $bio_link ? '<a href="' . get_the_permalink() . '" aria-hidden="true">' : ''); ?>
-							<img src="<?php the_post_thumbnail_url( 'medium' ); ?>" alt="<?php echo get_the_title() . ': ' . $staff['title'] ?>" />
-					<?php echo ( $bio_link ? '</a>' : '' ); ?>
-						</div>
-<?php
-					endif; ?>
-					<div class="staff-wrap">
-						<header class="entry-header">
-							<h2 class="entry-title"><?php echo ( $bio_link ? '<a href="' . get_the_permalink() . '" rel="bookmark">' . get_the_title() . '</a>' : get_the_title() ); ?></h2>
-					<?php
-					if ( !empty( $staff['email'] ) ) : ?>
-							<div class="social-icon">
-								<a href="mailto:<?php echo $staff['email']; ?>" target="_blank"><span class="fas fa-envelope" aria-hidden="true"></span></a>
-							</div>
-			<?php
-					endif;
-					if ( !empty( $staff['twitter'] ) ) : ?>
-							<div class="social-icon">
-								<a href="<?php echo $staff['twitter']; ?>" target="_blank"><span class="fab fa-twitter" aria-hidden="true"></span></a>
-							</div>
-			<?php
-					endif;
-					if (!empty( $staff['facebook'] ) ) : ?>
-							<div class="social-icon">
-								<a href="<?php echo $staff['facebook']; ?>" target="_blank"><span class="fab fa-facebook-f" aria-hidden="true"></span></a>
-							</div>
-			<?php
-					endif;
-					if (!empty( $staff['linkedin'] ) ) : ?>
-							<div class="social-icon">
-								<a href="<?php echo $staff['linkedin']; ?>" target="_blank"><span class="fab fa-linkedin-in" aria-hidden="true"></span></a>
-							</div>
-			<?php
-					endif; ?>
-
-						</header><!-- .entry-header -->
-						<div class="entry-summary">
-							<p><?php echo $staff['title']; ?></p>
-						</div><!-- .entry-summary -->
-					</div>
-				</article><!-- #post-## -->
-			<?php
-			endwhile;
+		<?php
+			hpm_staff_echo( $wp_query );
 
 			// Previous/next page navigation.
 			the_posts_pagination( [
@@ -96,8 +42,8 @@ get_header(); ?>
 		endif;
 		?>
 			</section>
-		</main><!-- .site-main -->
-	</section><!-- .content-area -->
+		</main>
+	</section>
 	<script>
 		document.addEventListener('DOMContentLoaded', () => {
 			var staffCat = document.querySelector('select#hpm-staff-cat')
