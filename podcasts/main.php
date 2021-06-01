@@ -878,7 +878,7 @@ class HPM_Podcasts {
 					$item_title = get_the_title();
 				endif;
 
-				$content = "<p>".wp_trim_words( strip_shortcodes( get_the_content() ), 75, '... <a href="'.get_the_permalink().'">Read More</a>' )."</p>";
+				$content = "<p>".strip_shortcodes( get_the_content() )."</p>";
 				if ( $feed_json ) :
 					$json['items'][] = [
 						'id' => $epid,
