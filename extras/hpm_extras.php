@@ -112,7 +112,7 @@ function add_rewrite_rules($aRules) {
 		'^(news887|classical)/schedule/([0-9]{4})/?$' => 'index.php?pagename=$matches[1]&sched_station=$matches[1]&sched_year=$matches[2]&sched_month=01&sched_day=01',
 		'^(news887|classical)/schedule/?$' => 'index.php?pagename=$matches[1]&sched_station=$matches[1]',
 		'^(news887|classical)/?$' => 'index.php?pagename=$matches[1]&sched_station=$matches[1]',
-		'^npr/([0-9]{4})/([0-9]{2})/([0-9]{2})/([0-9]{9})/([a-z0-9\-]+)/?' => 'index.php?pagename=npr-articles&npr_id=$matches[4]'
+		'^npr/([0-9]{4})/([0-9]{2})/([0-9]{2})/([0-9]+)/([a-z0-9\-]+)/?' => 'index.php?pagename=npr-articles&npr_id=$matches[4]'
 	];
 	$aRules = $aNewRules + $aRules;
 	return $aRules;
