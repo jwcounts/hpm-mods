@@ -1238,3 +1238,85 @@ function hpm_alt_headline_save_meta( $post_id, $post ) {
 		endif;
 	endif;
 }
+
+add_action( 'load-post.php', 'hpm_page_script_setup' );
+add_action( 'load-post-new.php', 'hpm_page_script_setup' );
+function hpm_page_script_setup() {
+	add_action( 'add_meta_boxes', 'hpm_page_script_add_meta' );
+	add_action( 'save_post', 'hpm_page_script_save_meta', 10, 2 );
+}
+
+function hpm_page_script_add_meta() {
+	$user = wp_get_current_user();
+	if ( in_array( 'administrator', (array) $user->roles ) ) :
+    	add_meta_box(
+			'hpm-page-script-meta-class',
+			esc_html__( 'Injectable Scripts or Styling', 'example' ),
+			'hpm_page_script_meta_box',
+			[ 'post', 'page' ],
+			'normal',
+			'high'
+		);
+	endif;
+}
+
+function hpm_page_script_meta_box( $object, $box ) {
+	wp_nonce_field( basename( __FILE__ ), 'hpm_page_script_class_nonce' );
+	$page_script = get_post_meta( $object->ID, 'hpm_page_script', true );
+	if ( empty( $page_script ) ) :
+		$page_script = [
+			'head' => '',
+			'foot' => ''
+		];
+	endif; ?>
+	<p>If you have styling or scripts that you would like to include, put them in here</p>
+	<label for="hpm-page-script-head"><strong><?php _e( "Header:", 'hpm-podcasts' ); ?></strong></label><br /><textarea id="hpm-page-script-head" name="hpm-page-script-head" placeholder="Scripts or styles to be injected into the document head" style="width: 100%;" rows="5"><?PHP echo $page_script['head']; ?></textarea>
+	<label for="hpm-page-script-foot"><strong><?php _e( "Footer:", 'hpm-podcasts' ); ?></strong></label><br /><textarea id="hpm-page-script-foot" name="hpm-page-script-foot" placeholder="Scripts or styles to be injected into the document footer" style="width: 100%;" rows="5"><?PHP echo $page_script['foot']; ?></textarea>
+<?php
+}
+
+function hpm_page_script_save_meta( $post_id, $post ) {
+	$user = wp_get_current_user();
+	if ( in_array( 'administrator', (array) $user->roles ) ) :
+		if ( !isset( $_POST['hpm_page_script_class_nonce'] ) || !wp_verify_nonce( $_POST['hpm_page_script_class_nonce'], basename( __FILE__ ) ) ) :
+			return $post_id;
+		endif;
+
+		$post_type = get_post_type_object( $post->post_type );
+
+		if ( !current_user_can( $post_type->cap->edit_post, $post_id ) ) :
+			return $post_id;
+		endif;
+
+		if ( empty( $_POST['hpm-page-script-head'] ) && empty( $_POST['hpm-page-script-foot'] ) ) :
+			delete_post_meta( $post_id, 'hpm_page_script' );
+		else :
+			$page_script = [
+				'head' => $_POST['hpm-page-script-head'],
+				'foot' => $_POST['hpm-page-script-foot']
+			];
+			update_post_meta( $post_id, 'hpm_page_script', $page_script );
+		endif;
+	endif;
+}
+
+add_action( 'wp_footer', function() {
+	global $wp_query;
+	if ( $wp_query->is_page || $wp_query->is_single ) :
+		$page_id = $wp_query->get_queried_object_id();
+		$page_script = get_post_meta( $page_id, 'hpm_page_script', true );
+		if ( !empty( $page_script['foot'] ) ) :
+			echo $page_script['foot'];
+		endif;
+	endif;
+}, 999 );
+add_action( 'wp_head', function() {
+	global $wp_query;
+	if ( $wp_query->is_page || $wp_query->is_single ) :
+		$page_id = $wp_query->get_queried_object_id();
+		$page_script = get_post_meta( $page_id, 'hpm_page_script', true );
+		if ( !empty( $page_script['head'] ) ) :
+			echo $page_script['head'];
+		endif;
+	endif;
+}, 200 );
