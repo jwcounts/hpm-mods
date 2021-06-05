@@ -1270,9 +1270,17 @@ function hpm_page_script_meta_box( $object, $box ) {
 		];
 	endif; ?>
 	<p>If you have styling or scripts that you would like to include, put them in here</p>
-	<label for="hpm-page-script-head"><strong><?php _e( "Header:", 'hpm-podcasts' ); ?></strong></label><br /><textarea id="hpm-page-script-head" name="hpm-page-script-head" placeholder="Scripts or styles to be injected into the document head" style="width: 100%;" rows="5"><?PHP echo $page_script['head']; ?></textarea>
-	<label for="hpm-page-script-foot"><strong><?php _e( "Footer:", 'hpm-podcasts' ); ?></strong></label><br /><textarea id="hpm-page-script-foot" name="hpm-page-script-foot" placeholder="Scripts or styles to be injected into the document footer" style="width: 100%;" rows="5"><?PHP echo $page_script['foot']; ?></textarea>
-<?php
+	<p><label for="hpm-page-script-head"><strong><?php _e( "Header:", 'hpm-podcasts' ); ?></strong></label><br /><?php
+		$editor_opts = [
+			'editor_height' => 200,
+			'media_buttons' => false,
+			'teeny' => true
+		];
+		wp_editor( $page_script['head'], 'hpm-page-script-head', $editor_opts );
+	?></p>
+	<p><label for="hpm-page-script-foot"><strong><?php _e( "Footer:", 'hpm-podcasts' ); ?></strong></label><br /><?php
+		wp_editor( $page_script['foot'], 'hpm-page-script-foot', $editor_opts ); ?></p>
+	<?php
 }
 
 function hpm_page_script_save_meta( $post_id, $post ) {
