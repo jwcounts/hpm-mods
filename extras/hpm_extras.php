@@ -1253,7 +1253,7 @@ function hpm_page_script_add_meta() {
 			'hpm-page-script-meta-class',
 			esc_html__( 'Injectable Scripts or Styling', 'example' ),
 			'hpm_page_script_meta_box',
-			[ 'post', 'page' ],
+			[ 'post', 'page', 'embeds', 'shows' ],
 			'normal',
 			'high'
 		);
@@ -1310,8 +1310,10 @@ function hpm_page_script_save_meta( $post_id, $post ) {
 
 add_action( 'wp_footer', function() {
 	global $wp_query;
-	if ( $wp_query->is_page || $wp_query->is_single ) :
-		$page_id = $wp_query->get_queried_object_id();
+	$page_id = $wp_query->get_queried_object_id();
+	$types = [ 'post', 'page', 'embeds', 'shows' ];
+	$post_type = get_post_type( $page_id );
+	if ( in_array( $post_type, $types ) ) :
 		$page_script = get_post_meta( $page_id, 'hpm_page_script', true );
 		if ( !empty( $page_script['foot'] ) ) :
 			echo $page_script['foot'];
@@ -1320,8 +1322,10 @@ add_action( 'wp_footer', function() {
 }, 999 );
 add_action( 'wp_head', function() {
 	global $wp_query;
-	if ( $wp_query->is_page || $wp_query->is_single ) :
-		$page_id = $wp_query->get_queried_object_id();
+	$page_id = $wp_query->get_queried_object_id();
+	$types = [ 'post', 'page', 'embeds', 'shows' ];
+	$post_type = get_post_type( $page_id );
+	if ( in_array( $post_type, $types ) ) :
 		$page_script = get_post_meta( $page_id, 'hpm_page_script', true );
 		if ( !empty( $page_script['head'] ) ) :
 			echo $page_script['head'];

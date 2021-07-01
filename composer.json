@@ -2,10 +2,10 @@
 	"name": "jwcounts/hpm-mods",
 	"description": "We have developed several small MU plugins for various functions and extensions for Wordpress, as well as the HPM Podcasts plugin. HPM Mods rolls all of these plugins into a single place.",
 	"type": "wordpress-plugin",
-	"version": "2021.18.1",
+	"version": "2021.18.2",
 	"require": {},
 	"dist": {
-		"url": "https://github.com/jwcounts/hpm-mods/archive/v2021.18.1.zip",
+		"url": "https://github.com/jwcounts/hpm-mods/archive/v2021.18.2.zip",
 		"type": "zip"
 	},
 	"license": "GPL",
