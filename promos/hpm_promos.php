@@ -717,6 +717,7 @@ class HPM_Promos {
 			display: block;
 			margin: 0 auto 1em;
 			background-color: white;
+			width: 100%;
 		}
 		.column-right div.hpm-promo-mobile-hide:nth-last-child(5) {
 			margin-bottom: 1em;

@@ -394,7 +394,7 @@ function analyticsPull_update() {
 	$then = $now[0] - 172800;
 	$match = [];
 	$result = $analytics->data_ga->get(
-		'ga:142153354',
+		'ga:233320975',
 		date( "Y-m-d", $then ),
 		date( "Y-m-d", $now[0] ),
 		'ga:visits',
@@ -409,9 +409,13 @@ function analyticsPull_update() {
 	);
 	$output = "<ul>";
 	foreach ( $result->rows as $row ) :
-		preg_match( '/\/articles\/([a-z0-9\-\/]+)\/[0-9]{4}\/[0-9]{2}\/[0-9]{2}\/([0-9]{1,6})\/.+/', $row[0], $match );
+		preg_match( '/\/articles\/[a-z0-9\-\/]+\/[0-9]{4}\/[0-9]{2}\/[0-9]{2}\/([0-9]+)\/(.+)/', $row[0], $match );
 		if ( !empty( $match ) ) :
-			$output .= '<li><h2 class="entry-title"><a href="'.$row[0].'" rel="bookmark">'.get_the_title( $match[2] ).'</a></h2></li>';
+			$title = get_the_title( $match[1] );
+			if ( empty( $title ) ) :
+				$title = ucwords str_replace( '-', ' ', $match[2] ) ;
+			endif;
+			$output .= '<li><h2 class="entry-title"><a href="'.$row[0].'" rel="bookmark">'.$title.'</a></h2></li>';
 		endif;
 	endforeach;
 	$output .= "</ul>";
@@ -1197,7 +1201,7 @@ function hpm_alt_headline_meta_box( $object, $box ) {
 		'Diana was still alive hours before she died',
 		'Missing woman unwittingly joins search party looking for herself',
 		'Meatball sandwich horseplay leads to two deaths, family betrayal, two trials',
-		'Patrick Stewart surprises fan with a life threatening illness',
+		'Patrick Stewart surprises fan with a life-threatening illness',
 		'Homicide victims rarely talk to police',
 		'"We hate math," say 4 in 10 - a majority of Americans',
 		'Breathing oxygen linked to staying alive',
@@ -1332,3 +1336,51 @@ add_action( 'wp_head', function() {
 		endif;
 	endif;
 }, 200 );
+
+
+function hpmv2_nowplaying ( $station ) {
+	return get_option( 'hpm_'.$station.'_nowplay' );
+}
+
+function hpmv2_nowplaying_update () {
+	$stations = [
+		'news887' => 'https://api.composer.nprstations.org/v1/widget/519131dee1c8f40813e79115/now?format=json',
+		'classical' => 'https://api.composer.nprstations.org/v1/widget/51913211e1c8408134a6d347/now?format=json&show_song=true',
+		'mixtape' => 'https://s3-us-west-2.amazonaws.com/hpmwebv2/assets/nowplay/mixtape.json',
+		'tv8.1' => 'https://s3-us-west-2.amazonaws.com/hpmwebv2/assets/nowplay/tv8.1.json',
+		'tv8.2' => 'https://s3-us-west-2.amazonaws.com/hpmwebv2/assets/nowplay/tv8.2.json',
+		'tv8.3' => 'https://s3-us-west-2.amazonaws.com/hpmwebv2/assets/nowplay/tv8.3.json',
+		'tv8.4' => 'https://s3-us-west-2.amazonaws.com/hpmwebv2/assets/nowplay/tv8.4.json'
+	];
+	foreach ( $stations as $k => $v ) :
+		$output = '<h3>';
+		$remote = wp_remote_get( esc_url_raw( $v ) );
+		if ( is_wp_error( $remote ) ) :
+			continue;
+		else :
+			$data = json_decode( wp_remote_retrieve_body( $remote ), true );
+		endif;
+		if ( strpos( $k, 'tv' ) !== false ) :
+			$output .= $data['airlist'][0]['version']['series']['series-title'];
+		elseif ( $k === 'mixtape' ) :
+			$output .= $data[0] . ' - ' . $data[1];
+		else :
+			if ( empty( $data['onNow']['song'] ) ) :
+				$output .= $data['onNow']['program']['name'];
+			else :
+				if ( !empty( $data['onNow']['song']['composerName'] ) ) :
+					$output .= $data['onNow']['song']['composerName'] . ' - ';
+				endif;
+				$output .= str_replace( '&', '&amp;', $data['onNow']['song']['trackName'] );
+			endif;
+		endif;
+		$output .= '</h3>';
+		update_option( 'hpm_' . $k . '_nowplay', $output, false );
+	endforeach;
+}
+
+add_action( 'hpm_nowplay_update', 'hpmv2_nowplaying_update' );
+$timestamp = wp_next_scheduled( 'hpm_nowplay_update' );
+if ( empty( $timestamp ) ) :
+	wp_schedule_event( time(), 'hpm_2min', 'hpm_nowplay_update' );
+endif;

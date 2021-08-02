@@ -495,7 +495,7 @@ class HPM_Podcasts {
 	/**
 	 * Create custom post type to house our podcast feeds
 	 */
-	public function create_type() {
+	public static function create_type() {
 		register_post_type( 'podcasts', [
 			'labels' => [
 				'name' => __( 'Podcasts' ),
@@ -1094,7 +1094,7 @@ class HPM_Podcasts {
 		return $content;
 	}
 
-	public static function show_social( $pod_id = '', $lede, $show_id = '' ) {
+	public static function show_social( $pod_id = '', $lede = false, $show_id = '' ) {
 		$temp = $output = '';
 		$badges = HPM_PODCAST_PLUGIN_URL.'badges/';
 
