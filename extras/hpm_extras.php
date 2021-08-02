@@ -413,7 +413,7 @@ function analyticsPull_update() {
 		if ( !empty( $match ) ) :
 			$title = get_the_title( $match[1] );
 			if ( empty( $title ) ) :
-				$title = ucwords str_replace( '-', ' ', $match[2] ) ;
+				$title = ucwords( str_replace( '-', ' ', $match[2] ) );
 			endif;
 			$output .= '<li><h2 class="entry-title"><a href="'.$row[0].'" rel="bookmark">'.$title.'</a></h2></li>';
 		endif;
