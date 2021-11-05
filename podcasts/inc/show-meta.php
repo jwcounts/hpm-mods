@@ -58,16 +58,19 @@
 		<div class="hpm-show-banner-image" id="hpm-show-banner-mobile"<?php echo $hpm_mobile_url; ?>></div>
 		<button class="hpm-show-banner-select button button-primary" data-show="mobile">Mobile</button>
 		<input value="<?php echo $hpm_show_meta['banners']['mobile']; ?>" type="hidden" id="hpm-show-banner-mobile-id" name="hpm-show-banner-mobile-id" />
+		<?php echo ( !empty( $hpm_show_meta['banners']['mobile'] ) ? '<button class="hpm-show-banner-remove button button-secondary" data-show="mobile" style="border-color: red; color: red;">Remove</button>' : '' ); ?>
 	</div>
 	<div class="hpm-show-banner">
 		<div class="hpm-show-banner-image" id="hpm-show-banner-tablet"<?php echo $hpm_tablet_url; ?>></div>
 		<button class="hpm-show-banner-select button button-primary" data-show="tablet">Tablet</button>
 		<input value="<?php echo $hpm_show_meta['banners']['tablet']; ?>" type="hidden" id="hpm-show-banner-tablet-id" name="hpm-show-banner-tablet-id" />
+		<?php echo ( !empty( $hpm_show_meta['banners']['tablet'] ) ? '<button class="hpm-show-banner-remove button button-secondary" data-show="tablet" style="border-color: red; color: red;">Remove</button>' : '' ); ?>
 	</div>
 	<div class="hpm-show-banner">
 		<div class="hpm-show-banner-image" id="hpm-show-banner-desktop"<?php echo $hpm_desktop_url; ?>></div>
 		<button class="hpm-show-banner-select button button-primary" data-show="desktop">Desktop</button>
 		<input value="<?php echo $hpm_show_meta['banners']['desktop']; ?>" type="hidden" id="hpm-show-banner-desktop-id" name="hpm-show-banner-desktop-id" />
+		<?php echo ( !empty( $hpm_show_meta['banners']['desktop'] ) ? '<button class="hpm-show-banner-remove button button-secondary" data-show="Desktop" style="border-color: red; color: red;">Remove</button>' : '' ); ?>
 	</div>
 </div>
 <p>&nbsp;</p>
@@ -119,16 +122,7 @@
 		<label for="hpm-social-yt"><?php _e( "YouTube:", 'hpm-podcasts' ); ?></label> <input type="text" id="hpm-social-yt" name="hpm-social-yt" value="<?PHP echo $hpm_show_social['yt']; ?>" placeholder="YouTube Channel or Playlist URL" style="width: 33%;" />
 	</li>
 	<li>
-		<label for="hpm-social-sc"><?php _e( "SoundCloud:", 'hpm-podcasts' ); ?></label> <i>https://soundcloud.com/</i><input type="text" id="hpm-social-sc" name="hpm-social-sc" value="<?PHP echo $hpm_show_social['sc']; ?>" placeholder="account-name" style="width: 33%;" />
-	</li>
-	<li>
 		<label for="hpm-social-insta"><?php _e( "Instagram:", 'hpm-podcasts' ); ?></label> <i>https://instagram.com/</i><input type="text" id="hpm-social-insta" name="hpm-social-insta" value="<?PHP echo $hpm_show_social['insta']; ?>" placeholder="account.name" style="width: 33%;" />
-	</li>
-	<li>
-		<label for="hpm-social-tumblr"><?php _e( "Tumblr:", 'hpm-podcasts' ); ?></label> <input type="text" id="hpm-social-tumblr" name="hpm-social-tumblr" value="<?PHP echo $hpm_show_social['tumblr']; ?>" placeholder="Tumblr URL" style="width: 33%;" />
-	</li>
-	<li>
-		<label for="hpm-social-snapchat"><?php _e( "Snapchat:", 'hpm-podcasts' ); ?></label> <i>http://www.snapchat.com/add/</i><input type="text" id="hpm-social-snapchat" name="hpm-social-snapchat" value="<?PHP echo $hpm_show_social['snapchat']; ?>" placeholder="Snapchat Username" style="width: 33%;" />
 	</li>
 </ul>
 <script>
@@ -157,6 +151,12 @@
 				$('#hpm-show-banner-'+size+'-id').val(attachId);
 			});
 			frame.open();
+		});
+		$('.hpm-show-banner-remove').click(function(e){
+			e.preventDefault();
+			var size = $(this).attr('data-show');
+			$('#hpm-show-banner-'+size).css( 'background-image', '' )
+			$('#hpm-show-banner-'+size+'-id').val('');
 		});
 	});
 </script>

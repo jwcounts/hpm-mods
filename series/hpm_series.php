@@ -70,16 +70,19 @@ function hpm_header_image_meta_box( $object, $box ) {
 			<div class="hpm-page-banner-image" id="hpm-page-banner-mobile"<?php echo $hpm_mobile_url; ?>></div>
 			<button class="hpm-page-banner-select button button-primary" data-show="mobile">Mobile</button>
 			<input value="<?php echo $hpm_page_options['banner']['mobile']; ?>" type="hidden" id="hpm-page-banner-mobile-id" name="hpm-page-banner-mobile-id" />
+			<?php echo ( !empty( $hpm_page_options['banner']['mobile'] ) ? '<button class="hpm-page-banner-remove button button-secondary" data-show="mobile" style="border-color: red; color: red;">Remove</button>' : '' ); ?>
 		</div>
 		<div class="hpm-page-banner">
 			<div class="hpm-page-banner-image" id="hpm-page-banner-tablet"<?php echo $hpm_tablet_url; ?>></div>
 			<button class="hpm-page-banner-select button button-primary" data-show="tablet">Tablet</button>
 			<input value="<?php echo $hpm_page_options['banner']['tablet']; ?>" type="hidden" id="hpm-page-banner-tablet-id" name="hpm-page-banner-tablet-id" />
+			<?php echo ( !empty( $hpm_page_options['banner']['tablet'] ) ? '<button class="hpm-page-banner-remove button button-secondary" data-show="tablet" style="border-color: red; color: red;">Remove</button>' : '' ); ?>
 		</div>
 		<div class="hpm-page-banner">
 			<div class="hpm-page-banner-image" id="hpm-page-banner-desktop"<?php echo $hpm_desktop_url; ?>></div>
 			<button class="hpm-page-banner-select button button-primary" data-show="desktop">Desktop</button>
 			<input value="<?php echo $hpm_page_options['banner']['desktop']; ?>" type="hidden" id="hpm-page-banner-desktop-id" name="hpm-page-banner-desktop-id" />
+			<?php echo ( !empty( $hpm_page_options['banner']['desktop'] ) ? '<button class="hpm-page-banner-remove button button-secondary" data-show="desktop" style="border-color: red; color: red;">Remove</button>' : '' ); ?>
 		</div>
 	</div>
 	<script>
@@ -108,6 +111,12 @@ function hpm_header_image_meta_box( $object, $box ) {
 					$('#hpm-page-banner-'+size+'-id').val(attachId);
 				});
 				frame.open();
+			});
+			$('.hpm-page-banner-remove').click(function(e){
+				e.preventDefault();
+				var size = $(this).attr('data-show');
+				$('#hpm-page-banner-'+size).css( 'background-image', '' )
+				$('#hpm-page-banner-'+size+'-id').val('');
 			});
 		});
 	</script>
@@ -247,6 +256,81 @@ function hpm_series_save_meta( $post_id, $post ) {
 		update_post_meta( $post_id, 'hpm_page_options', $hpm_page_options );
 	endif;
 }
+
+
+
+// public static function show_header( $id ) {
+// 	$temp = '';
+// 	$options = get_post_meta( $id, 'hpm_show_meta', true );
+// 	$social = get_post_meta( get_the_ID(), 'hpm_show_social', true );
+// 	$count = 0;
+// 	foreach ( $options['banners'] as $op ) :
+// 		if ( !empty( $op ) ) :
+// 			$count++;
+// 		endif;
+// 	endforeach;
+
+// 	if ( $count > 0 ) :
+// 		$temp .= '<div class="page-banner"><picture>';
+// 		foreach ( $options['banners'] as $bk => $bv ) :
+// 			if ( !empty( $bv ) ) :
+// 				if ( $bk == 'mobile' ) :
+// 					$temp .= '<source srcset="' . wp_get_attachment_url( $bv ) . '" media="(max-width: 34em)" />';
+// 				elseif ( $bk == 'tablet' ) :
+// 					$temp .= '<source srcset="' . wp_get_attachment_url( $bv ) . '" media="(max-width: 52.5em)" />';
+// 				elseif ( $bk == 'desktop' ) :
+// 					$temp .= '<source srcset="' . wp_get_attachment_url( $bv ) . '" />';
+// 				endif;
+// 			endif;
+// 		endforeach;
+// 		$default = $options['banners']['desktop'] ?? $options['banners']['tablet'] ?? $options['banners']['mobile'];
+// 		$temp .= '<img src="' . wp_get_attachment_url( $default ) . '" alt="' . get_the_title( $id ) . ' page banner" /></picture></div>';
+// 	endif;
+// 	$output =
+// 		'<header class="page-header' . ( !empty( $temp ) ? ' banner' : '' ) . '">' .
+// 			'<h1 class="page-title"' . ( !empty( $temp ) ? ' hidden' : '' ) . '>' . get_the_title( $id ) . '</h1>' .
+// 			$temp;
+// 	$no = 0;
+// 	foreach( $options as $sk => $sh ) :
+// 		if ( !empty( $sh ) && $sk != 'banners' ) :
+// 			$no++;
+// 		endif;
+// 	endforeach;
+// 	foreach( $social as $soc ) :
+// 		if ( !empty( $soc ) ) :
+// 			$no++;
+// 		endif;
+// 	endforeach;
+// 	if ( $no > 0 ) :
+// 		$output .= '<div id="station-social">';
+// 		if ( !empty( $options['times'] ) ) :
+// 			$output .= '<h3>' . $options['times'] .'</h3>';
+// 		endif;
+// 		$output .= HPM_Podcasts::show_social( $options['podcast'], false, $id ) . '</div>';
+// 	endif;
+// 	$output .= '</header>';
+// 	return $output;
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function hpm_head_banners( $id ) {
 	$postscript = get_post_meta( $id, 'postscript_meta', true );
 	if ( !empty( $postscript ) && $postscript['class_body'] == 'support-ssac' ) :
@@ -256,7 +340,7 @@ function hpm_head_banners( $id ) {
 		return $page_head_class;
 	endif;
 	$options = get_post_meta( $id, 'hpm_page_options', true );
-	$page_head_style = $page_head_class = '';
+	$page_head_class = '';
 	$count = 0;
 	if ( !empty( $options ) ) :
 		foreach ( $options['banner'] as $op ) :
@@ -265,31 +349,34 @@ function hpm_head_banners( $id ) {
 			endif;
 		endforeach;
 	endif;
-	if ( $count > 1 ) :
-		echo '<div class="page-banner"></div>';
+
+	if ( $count > 0 ) :
+		echo '<div class="page-banner"><picture>';
 		$page_head_class = ' screen-reader-text';
+	endif;
+	if ( $count > 1 ) :
 		foreach ( $options['banner'] as $bk => $bv ) :
 			if ( !empty( $bv ) ) :
 				if ( $bk == 'mobile' ) :
-					$page_head_style .= ".page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/1.5); }";
+					echo '<source srcset="' . wp_get_attachment_url( $bv ) . '" media="(max-width: 34em)" />';
 				elseif ( $bk == 'tablet' ) :
-					$page_head_style .= " @media screen and (min-width: 34em) { .page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/4); } }";
+					echo '<source srcset="' . wp_get_attachment_url( $bv ) . '" media="(max-width: 52.5em)" />';
 				elseif ( $bk == 'desktop' ) :
-					$page_head_style .= " @media screen and (min-width: 52.5em) { .page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/6); } }";
+					echo '<source srcset="' . wp_get_attachment_url( $bv ) . '" />';
 				endif;
 			endif;
 		endforeach;
+		$default = $options['banner']['desktop'] ?? $options['banner']['tablet'] ?? $options['banner']['mobile'];
+		echo '<img src="' . wp_get_attachment_url( $default ) . '" alt="' . get_the_title( $id ) . ' page banner" />';
 	elseif ( $count == 1 ) :
-		echo '<div class="page-banner"></div>';
-		$page_head_class = ' screen-reader-text';
 		foreach ( $options['banner'] as $bk => $bv ) :
 			if ( !empty( $bv ) ) :
-				$page_head_style .= ".page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/6); }";
+				echo '<source srcset="' . wp_get_attachment_url( $bv ) . '" /><img src="' . wp_get_attachment_url( $bv ) . '" alt="' . get_the_title( $id ) . ' page banner" />';
 			endif;
 		endforeach;
 	endif;
-	if ( !empty( $page_head_style ) ) :
-		echo "<style>".$page_head_style."</style>";
+	if ( $count > 0 ) :
+		echo '</picture></div>';
 	endif;
 	return $page_head_class;
 }

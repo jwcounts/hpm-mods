@@ -1137,26 +1137,17 @@ class HPM_Podcasts {
 		endif;
 		if ( !empty( $show_id ) ) :
 			$social = get_post_meta( $show_id, 'hpm_show_social', true );
-			if ( !empty( $social['snapchat'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="http://www.snapchat.com/add/'.$social['snapchat'].'" target="_blank" title="Snapchat"><span class="fab fa-snapchat-ghost" aria-hidden="true"></span></a></li>';
-			endif;
-			if ( !empty( $social['tumblr'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="'.$social['tumblr'].'" target="_blank" title="Tumblr"><span class="fab fa-tumblr" aria-hidden="true"></span></a></li>';
-			endif;
 			if ( !empty( $social['insta'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="https://instagram.com/' . $social['insta'].'" target="_blank" title="Instagram"><span class="fab fa-instagram" aria-hidden="true"></span></a></li>';
-			endif;
-			if ( !empty( $social['sc'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="https://soundcloud.com/'.$social['sc'].'" target="_blank" title="SoundCloud"><span class="fab fa-soundcloud" aria-hidden="true"></span></a></li>';
+				$temp .= '<li class="social-icon instagram"><a href="https://instagram.com/' . $social['insta'].'" target="_blank" title="Instagram"><span class="fab fa-instagram" aria-hidden="true"></span></a></li>';
 			endif;
 			if ( !empty( $social['yt'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="'.$social['yt'].'" target="_blank" title="YouTube"><span class="fab fa-youtube" aria-hidden="true"></span></a></li>';
+				$temp .= '<li class="social-icon youtube"><a href="'.$social['yt'].'" target="_blank" title="YouTube"><span class="fab fa-youtube" aria-hidden="true"></span></a></li>';
 			endif;
 			if ( !empty( $social['twitter'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="https://twitter.com/'.$social['twitter'].'" target="_blank" title="Twitter"><span class="fab fa-twitter" aria-hidden="true"></span></a></li>';
+				$temp .= '<li class="social-icon twitter"><a href="https://twitter.com/'.$social['twitter'].'" target="_blank" title="Twitter"><span class="fab fa-twitter" aria-hidden="true"></span></a></li>';
 			endif;
 			if ( !empty( $social['fb'] ) ) :
-				$temp .= '<li class="station-social-icon"><a href="https://www.facebook.com/'.$social['fb'].'" target="_blank" title="Facebook"><span class="fab fa-facebook-f" aria-hidden="true"></span></a></li>';
+				$temp .= '<li class="social-icon facebook"><a href="https://www.facebook.com/'.$social['fb'].'" target="_blank" title="Facebook"><span class="fab fa-facebook-f" aria-hidden="true"></span></a></li>';
 			endif;
 		endif;
 		if ( !empty( $pod_link ) && $lede ) :
@@ -1167,54 +1158,101 @@ class HPM_Podcasts {
 		return $output;
 	}
 
-	public static function show_banner( $id ) {
+	/*
+		TODO: Figure out how to include page-banner inside header.page-header
+		TODO: Extend this to hpm_series also
+	*/
+	public static function show_header( $id ) {
+		$temp = '';
 		$options = get_post_meta( $id, 'hpm_show_meta', true );
-		$page_head_style = $page_head_class = '';
+		$social = get_post_meta( get_the_ID(), 'hpm_show_social', true );
 		$count = 0;
 		foreach ( $options['banners'] as $op ) :
 			if ( !empty( $op ) ) :
 				$count++;
 			endif;
 		endforeach;
-		if ( $count > 1 ) :
-			echo '<div class="page-banner"></div>';
-			$page_head_class = ' screen-reader-text';
+
+		if ( $count > 0 ) :
+			$temp .= '<div class="page-banner"><picture>';
 			foreach ( $options['banners'] as $bk => $bv ) :
 				if ( !empty( $bv ) ) :
 					if ( $bk == 'mobile' ) :
-						$page_head_style .= ".page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/1.5); }";
+						$temp .= '<source srcset="' . wp_get_attachment_url( $bv ) . '" media="(max-width: 34em)" />';
 					elseif ( $bk == 'tablet' ) :
-						$page_head_style .= " @media screen and (min-width: 34em) { .page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/4); } }";
+						$temp .= '<source srcset="' . wp_get_attachment_url( $bv ) . '" media="(max-width: 52.5em)" />';
 					elseif ( $bk == 'desktop' ) :
-						$page_head_style .= " @media screen and (min-width: 52.5em) { .page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/6); } }";
+						$temp .= '<source srcset="' . wp_get_attachment_url( $bv ) . '" />';
 					endif;
 				endif;
 			endforeach;
-		elseif ( $count == 1 ) :
-			echo '<div class="page-banner"></div>';
-			$page_head_class = ' screen-reader-text';
-			foreach ( $options['banners'] as $bk => $bv ) :
-				if ( !empty( $bv ) ) :
-					$page_head_style .= ".page-banner { background-image: url(".wp_get_attachment_url( $bv )."); padding-bottom: calc(100%/6); }";
-				endif;
-			endforeach;
+			$default = $options['banners']['desktop'] ?? $options['banners']['tablet'] ?? $options['banners']['mobile'];
+			$temp .= '<img src="' . wp_get_attachment_url( $default ) . '" alt="' . get_the_title( $id ) . ' page banner" /></picture></div>';
 		endif;
-		if ( !empty( $page_head_style ) ) :
-			echo "<style>".$page_head_style."</style>";
+		$output =
+			'<header class="page-header' . ( !empty( $temp ) ? ' banner' : '' ) . '">' .
+				'<h1 class="page-title"' . ( !empty( $temp ) ? ' hidden' : '' ) . '>' . get_the_title( $id ) . '</h1>' .
+				$temp;
+		$no = 0;
+		foreach( $options as $sk => $sh ) :
+			if ( !empty( $sh ) && $sk != 'banners' ) :
+				$no++;
+			endif;
+		endforeach;
+		foreach( $social as $soc ) :
+			if ( !empty( $soc ) ) :
+				$no++;
+			endif;
+		endforeach;
+		if ( $no > 0 ) :
+			$output .= '<div id="station-social">';
+			if ( !empty( $options['times'] ) ) :
+				$output .= '<h3>' . $options['times'] .'</h3>';
+			endif;
+			$output .= HPM_Podcasts::show_social( $options['podcast'], false, $id ) . '</div>';
 		endif;
-		return $page_head_class;
+		$output .= '</header>';
+		return $output;
 	}
 
-	public function remove_foot_filter( $content )
-	{
+	public static function list_episodes( $show_id ) {
+		$episodes = [];
+		$cat_no = get_post_meta( $show_id, 'hpm_shows_cat', true );
+		$top =  get_post_meta( $show_id, 'hpm_shows_top', true );
+		$cat_args = [
+			'cat' => $cat_no,
+			'orderby' => 'date',
+			'order'   => 'DESC',
+			'posts_per_page' => 16,
+			'ignore_sticky_posts' => 1
+		];
+		if ( !empty( $top ) && $top !== 'None' ) :
+			$top_art = new WP_Query( [ 'p' => $top ] );
+			$cat_args['posts_per_page']--;
+			$cat_args['post__not_in'] = [ $top ];
+			if ( $top_art->have_posts() ) :
+				foreach ( $top_art->posts as $tp ) :
+					$episodes[] = $tp;
+				endforeach;
+			endif;
+		endif;
+		$cat = new WP_Query( $cat_args );
+		if ( $cat->have_posts() ) :
+			foreach ( $cat->posts as $cp ) :
+				$episodes[] = $cp;
+			endforeach;
+		endif;
+		return $episodes;
+	}
+
+	public function remove_foot_filter( $content ) {
 		if ( has_filter( 'the_content', [ $this, 'article_footer' ] ) ) :
 			remove_filter( 'the_content', [ $this, 'article_footer' ] );
 		endif;
 		return $content;
 	}
 
-	public function add_foot_filter( $content )
-	{
+	public function add_foot_filter( $content ) {
 		add_filter( 'the_content', [ $this, 'article_footer' ] );
 		return $content;
 	}

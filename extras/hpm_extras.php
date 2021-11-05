@@ -452,14 +452,11 @@ function hpm_nprapi_output() {
 	endif;
 	foreach ( $npr_json['list']['story'] as $story ) :
 		$npr_date = strtotime($story['storyDate']['$text']);
-		$output .= '<article class="national-content">';
+		$output .= '<article>';
 		if ( !empty( $story['image'][0]['src'] ) ) :
-			$output .= '<div class="national-image" style="background-image: url('.$story['image'][0]['src'].')"><a href="/npr/'.date('Y/m/d/',$npr_date).$story['id'].'/'.sanitize_title($story['title']['$text']).'/" class="post-thumbnail"></a></div><div class="national-text">';
-		else :
-			$output .= '<div class="national-text-full">';
+			$output .= '<a href="/npr/'.date('Y/m/d/',$npr_date).$story['id'].'/'.sanitize_title($story['title']['$text']).'/" class="post-thumbnail"><img src="'.$story['image'][0]['src'].'" alt="'.$story['title']['$text'].'" loading="lazy" /></a>';
 		endif;
-		$output .= '<h2><a href="/npr/'.date('Y/m/d/',$npr_date).$story['id'].'/'.sanitize_title($story['title']['$text']).'/">'.$story['title']['$text'].'</a></h2><p class="screen-reader-text">'
-		           .$story['teaser']['$text'].'</p></div></article>';
+		$output .= '<div class="card-content"><div class="entry-header"><h2 class="entry-title"><a href="/npr/'.date('Y/m/d/',$npr_date).$story['id'].'/'.sanitize_title($story['title']['$text']).'/" rel="bookmark">'.$story['title']['$text'].'</a></h2></div><div class="entry-summary screen-reader-text">'.$story['teaser']['$text'].'</div></div></article>';
 	endforeach;
 	set_transient( 'hpm_nprapi', $output, 300 );
 	return $output;
@@ -678,7 +675,7 @@ function hpm_segments( $name, $date ) {
 					$api = wp_remote_retrieve_body( $remote );
 					$json = json_decode( $api, TRUE );
 					if ( !empty( $json['list']['story'] ) ) :
-						$output .= "<div class=\"progsegment\"><h4>Segments for {$date}</h4><ul>";
+						$output .= "<div class=\"progsegment\"><button>Segments for {$date}</button><ul>";
 						foreach ( $json['list']['story'] as $j ) :
 							foreach ( $j['link'] as $jl ) :
 								if ( $jl['type'] == 'html' ) :
@@ -695,7 +692,7 @@ function hpm_segments( $name, $date ) {
 		elseif ( $shows[$name]['source'] == 'regex' ) :
 			if ( $name == 'BBC World Service' ) :
 				$offset = str_replace( '-', '', get_option( 'gmt_offset' ) );
-				$output .= "<div class=\"progsegment\"><h4>Schedule</h4><ul><li><a href=\"{$shows[$name]['id']}{$dx[0]}/{$dx[1]}/{$dx[2]}?utcoffset=-0{$offset}:00\" target=\"_blank\">BBC Schedule for {$date}</a></li></ul></div>";
+				$output .= "<div class=\"progsegment\"><button>Schedule</button><ul><li><a href=\"{$shows[$name]['id']}{$dx[0]}/{$dx[1]}/{$dx[2]}?utcoffset=-0{$offset}:00\" target=\"_blank\">BBC Schedule for {$date}</a></li></ul></div>";
 				return $output;
 			endif;
 		elseif ( $shows[$name]['source'] == 'wp-rss' ) :
@@ -716,7 +713,7 @@ function hpm_segments( $name, $date ) {
 						foreach ( $json['channel']['item'] as $item ) :
 							if ( !$set ) :
 								if ( strtolower( $item['title'] ) === $title ) :
-									$output .= '<div class="progsegment"><h4>Program for '. $date . '</h4><ul><li><a href="'.$item['link'].'" target="_blank">' . $item['title'] .'</a></li></ul></div>';
+									$output .= '<div class="progsegment"><button>Program for '. $date . '</button><ul><li><a href="'.$item['link'].'" target="_blank">' . $item['title'] .'</a></li></ul></div>';
 									$set = true;
 								endif;
 							endif;
@@ -738,7 +735,7 @@ function hpm_segments( $name, $date ) {
 					$api = wp_remote_retrieve_body( $remote );
 					$json = json_decode( $api );
 					if ( !empty( $json ) ) :
-						$output .= "<div class=\"progsegment\"><h4>Segments for {$date}</h4><ul>";
+						$output .= "<div class=\"progsegment\"><button>Segments for {$date}</button><ul>";
 						foreach ( $json as $j ) :
 							$output .= '<li><a href="'.$j->link.'" target="_blank">'.$j->title->rendered.'</a></li>';
 						endforeach;
@@ -759,7 +756,7 @@ function hpm_segments( $name, $date ) {
 					'ignore_sticky_posts' => 1
 				] );
 				if ( $hm->have_posts() ) :
-					$output .= "<div class=\"progsegment\"><h4>Segments for {$date}</h4><ul>";
+					$output .= "<div class=\"progsegment\"><button>Segments for {$date}</button><ul>";
 					while( $hm->have_posts() ) :
 						$hm->the_post();
 						$output .= '<li><a href="'.get_the_permalink().'">'.get_the_title().'</a></li>';

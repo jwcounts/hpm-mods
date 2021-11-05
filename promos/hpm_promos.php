@@ -633,11 +633,6 @@ class HPM_Promos {
 				});
 			});
 		}
-		if ( document.querySelector('#emergency') !== null ) {
-			setTimeout(() => {
-				document.querySelector('#emergency').classList.add('displayed');
-			}, 500);
-		}
 	}());
 </script>
 <style>
